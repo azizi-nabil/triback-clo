@@ -1,0 +1,7 @@
+timestamp,dataset,ratio,minsup_pct,algorithm,wall_sec,mining_sec,cpu_pct,maxrss_kb,patterns,status,run_type
+2026-01-10_07:26:20,Kosarak,0.1,10.0000,TriBack-Clo,4.37,1.100,309,1752732,0,OK,median_of_3
+2026-01-10_07:26:40,Kosarak,0.05,5.0000,TriBack-Clo,4.93,1.622,291,1753488,0,OK,median_of_3
+2026-01-10_07:27:04,Kosarak,0.02,2.0000,TriBack-Clo,5.77,2.491,261,1734704,0,OK,median_of_3
+2026-01-10_07:27:33,Kosarak,0.01,1.0000,TriBack-Clo,7.24,3.972,240,2037384,0,OK,median_of_3
+2026-01-10_07:28:19,Kosarak,0.005,0.5000,TriBack-Clo,11.54,8.259,196,2246028,0,OK,median_of_3
+2026-01-10_07:32:49,Kosarak,0.002,0.2000,TriBack-Clo,68.42,65.073,119,3369772,0,OK,median_of_3

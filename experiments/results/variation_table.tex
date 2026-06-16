@@ -1,0 +1,36 @@
+% Auto-generated Variation Table (Final Supplement Version)
+\begin{table*}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption{Run-to-run variation for representative output-equivalent benchmark configurations. Values report min/median/max over three measured runs; warm-up runs are excluded. Only configurations with three completed measured runs and matching pattern counts are included. TIMEOUT, OOM, and failed runs are treated as censored outcomes and are excluded from formal variance/statistical summaries. Runtime and memory comparisons are reported only for output-equivalent configurations.}
+\label{tab:run-variation}
+\begin{tabular}{lllc r r r c c}
+\hline
+Dataset & Support & Algorithm & Status & Patterns & Wall min/med/max (s) & MaxRSS min/med/max (MB) & Range$_W$ & Range$_M$ \\
+\hline
+Kosarak & 0.1\% & BIDE+ & 3/3 OK & 529,948 & 6001.72/6101.66/6106.20 & 11134/11144/13289 & 1.7\% & 19.3\% \\
+ & 0.1\% & TriBack-Clo & 3/3 OK & 529,948 & 518.83/543.02/551.71 & 1677/1857/1870 & 6.1\% & 10.4\% \\
+SIGN & 1\% & BIDE+ & 3/3 OK & 37,265,723 & 3260.07/3271.17/3275.60 & 9947/9947/9950 & 0.5\% & 0.0\% \\
+ & 1\% & TriBack-Clo & 3/3 OK & 37,265,723 & 287.62/287.68/288.72 & 1643/1655/1672 & 0.4\% & 1.7\% \\
+MSNBC & 0.05\% & BIDE+ & 3/3 OK & 78,105 & 154.22/161.48/162.59 & 10106/10111/10113 & 5.2\% & 0.1\% \\
+ & 0.05\% & ClaSP & 3/3 OK & 78,105 & 145.35/149.47/150.39 & 51088/51724/54746 & 3.4\% & 7.1\% \\
+ & 0.05\% & CloSpan & 3/3 OK & 78,105 & 5052.46/5116.08/5144.93 & 44782/44986/45170 & 1.8\% & 0.9\% \\
+ & 0.05\% & TriBack-Clo & 3/3 OK & 78,105 & 34.31/34.41/36.39 & 1090/1125/1129 & 6.0\% & 3.5\% \\
+D10C60 & 40\% & BIDE+ & 3/3 OK & 3,432 & 468.52/470.62/471.72 & 12659/13019/13213 & 0.7\% & 4.3\% \\
+ & 40\% & ClaSP & 3/3 OK & 3,432 & 355.69/356.18/358.78 & 8465/8506/17848 & 0.9\% & 110.3\% \\
+ & 40\% & CloSpan & 3/3 OK & 3,432 & 324.78/329.19/336.36 & 5093/10124/11029 & 3.5\% & 58.6\% \\
+ & 40\% & TriBack-Clo & 3/3 OK & 3,432 & 153.38/153.81/154.63 & 669/669/669 & 0.8\% & 0.1\% \\
+D10C70 & 40\% & BIDE+ & 3/3 OK & 12,349 & 2512.03/2521.62/2541.63 & 12258/12266/12299 & 1.2\% & 0.3\% \\
+ & 40\% & ClaSP & 3/3 OK & 12,349 & 1470.77/1476.63/1502.36 & 13249/17478/25749 & 2.1\% & 71.5\% \\
+ & 40\% & CloSpan & 3/3 OK & 12,349 & 1572.18/1617.35/1661.17 & 3491/4421/7692 & 5.5\% & 95.0\% \\
+ & 40\% & TriBack-Clo & 3/3 OK & 12,349 & 563.06/566.51/570.34 & 598/603/603 & 1.3\% & 0.8\% \\
+D50T40 & 40\% & BIDE+ & 3/3 OK & 5,268 & 3370.92/3387.78/3401.57 & 20242/20590/23143 & 0.9\% & 14.1\% \\
+ & 40\% & ClaSP & 3/3 OK & 5,268 & 2069.29/2101.84/2115.71 & 26089/28276/33357 & 2.2\% & 25.7\% \\
+ & 40\% & CloSpan & 3/3 OK & 5,268 & 1971.09/1984.74/1992.26 & 1647/9899/11498 & 1.1\% & 99.5\% \\
+ & 40\% & TriBack-Clo & 3/3 OK & 5,268 & 799.68/804.45/808.38 & 1251/1252/1261 & 1.1\% & 0.8\% \\
+\hline
+\end{tabular}
+\smallskip
+\emph{Note.} Range$_W$ and Range$_M$ denote $(\max-\min)/\mathrm{median}\times100$ for wall time and MaxRSS, respectively. They are descriptive run-to-run ranges, not statistical variance estimates.
+\end{table*}

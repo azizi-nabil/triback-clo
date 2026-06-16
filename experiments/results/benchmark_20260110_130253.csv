@@ -1,0 +1,3 @@
+timestamp,dataset,ratio,minsup_pct,algorithm,wall_sec,mining_sec,cpu_pct,maxrss_kb,patterns,status,run_type
+2026-01-10_13:02:55,Kosarak25k,0.005,0.5000,TriBack-Clo,0.57,0.419,253,242800,1458,OK,median_of_3
+2026-01-10_13:03:10,Kosarak25k,0.001,0.1000,TriBack-Clo,3.74,3.603,123,317204,42671,OK,median_of_3

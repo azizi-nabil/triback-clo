@@ -1,0 +1,2 @@
+timestamp,dataset,ratio,minsup_pct,algorithm,wall_sec,mining_sec,cpu_pct,maxrss_kb,patterns,status,run_type
+2026-01-10_21:03:52,D5N1,0.01,1.0000,TriBack-Clo,12.61,12.503,104,582596,223971,OK,median_of_3

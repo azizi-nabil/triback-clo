@@ -1,0 +1,22 @@
+timestamp,profile,mode,case_family,dataset,ratio,minsup_pct,minsup_abs,variant,warmup_runs,measured_runs,wall_sec_median,mining_sec_median,maxrss_kb_median,internal_mem_mb_median,patterns_median,nodes_visited_median,subtrees_pruned_raw_median,subtrees_pruned_effective,nodes_gated_median,status,notes
+20260330_230918,full,full,single_dense,SIGN,0.01,1.000000,8,Full,1,3,304.837,304.727,0,1320.5335235595703,37265723,79803670,12112103,12112103,0,OK,
+20260402_042929,full,full,single_dense,SIGN,0.01,1.000000,8,NoPrune,1,3,393.714,393.602,0,1800.661247253418,37265723,99962672,14728858,NA,0,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,single_prune_stress,Kosarak25k,0.0005,0.050000,13,Full,1,3,89.757,89.652,0,801.5023574829102,211039,28462200,22491700,22491700,0,OK,
+20260402_042929,full,full,single_prune_stress,Kosarak25k,0.0005,0.050000,13,NoPrune,1,3,7200,7200,0,0,0,0,0,NA,0,TIMEOUT,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_mixed,D20C20,0.001,0.100000,20,Full,1,3,735.253,735.148,0,801.5023574829102,1464711,53518876,17006431,17006431,6996211,OK,
+20260402_042929,full,full,multi_mixed,D20C20,0.001,0.100000,20,NoPrune,1,3,2444.996,2444.875,0,4469.19775390625,1464711,148672242,50123932,NA,26684444,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_mixed,D20C20,0.001,0.100000,20,NoGate,1,3,796.435,796.331,0,801.5023574829102,1464711,53518876,17006431,17006431,0,OK,
+20260330_230918,full,full,multi_gate_heavy,D5N1,0.004,0.400000,20,Full,1,3,504.039,503.933,0,801.5023574829102,2906522,31904263,398097,398097,15693152,OK,
+20260402_042929,full,full,multi_gate_heavy,D5N1,0.004,0.400000,20,NoPrune,1,3,547.159,547.054,0,801.5023574829102,2906522,33258436,1160413,NA,16642818,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_gate_heavy,D5N1,0.004,0.400000,20,NoGate,1,3,637.026,636.925,0,801.5023574829102,2906522,31904263,398097,398097,0,OK,
+20260330_230918,full,full,single_prune_sparse,BMS2,0.00005,0.005000,4,Full,1,3,46.143,46.035,0,801.5023574829102,1196295,30341774,11437291,11437291,0,OK,
+20260402_042929,full,full,single_prune_sparse,BMS2,0.00005,0.005000,4,NoPrune,1,3,101.342,101.230,0,1233.9916534423828,1196295,60193074,21833808,NA,0,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_mixed_heavy,D20C30,0.001,0.100000,20,Full,1,3,3251.773,3251.645,0,5676.865135192871,4951322,178768304,38216450,38216450,34204115,OK,
+20260402_042929,full,full,multi_mixed_heavy,D20C30,0.001,0.100000,20,NoPrune,1,3,7200,7200,0,0,0,0,0,NA,0,TIMEOUT,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_mixed_heavy,D20C30,0.001,0.100000,20,NoGate,1,3,3709.426,3709.299,0,5465.250770568848,4951322,178768304,38216450,38216450,0,OK,
+20260330_230918,full,full,multi_gate_family,D20C60,0.005,0.500000,100,Full,1,3,665.981,665.873,0,801.5023574829102,1223050,2238901,4286,4286,138284,OK,
+20260402_042929,full,full,multi_gate_family,D20C60,0.005,0.500000,100,NoPrune,1,3,773.033,772.925,0,801.5023574829102,1223050,2238953,4294,NA,138335,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_gate_family,D20C60,0.005,0.500000,100,NoGate,1,3,679.716,679.612,0,801.5023574829102,1223050,2238901,4286,4286,0,OK,
+20260330_230918,full,full,multi_gate_confirmation,D5N1.6,0.006,0.600000,30,Full,1,3,21.018,20.915,0,161.50235748291016,236046,381718,1779,1779,79363,OK,
+20260402_042929,full,full,multi_gate_confirmation,D5N1.6,0.006,0.600000,30,NoPrune,1,3,35.860,35.369,0,161.50235748291016,236046,385695,4654,NA,82499,OK,Raw pruned counter records temporal-witness detections before the no-prune guard.
+20260330_230918,full,full,multi_gate_confirmation,D5N1.6,0.006,0.600000,30,NoGate,1,3,21.960,21.863,0,161.50235748291016,236046,381718,1779,1779,0,OK,

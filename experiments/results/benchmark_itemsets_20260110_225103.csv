@@ -1,0 +1,6 @@
+timestamp,dataset,ratio,minsup_pct,algorithm,wall_sec,mining_sec,cpu_pct,maxrss_kb,patterns,status,run_type
+2026-01-10_22:51:04,D10C20,0.4,40.0000,TriBack-Clo-Java,0.13,0.13,183,95172,0,OK,median_of_3
+2026-01-10_22:51:06,D10C20,0.4,40.0000,BIDE+,0.69,0.467,211,960516,18,OK,median_of_3
+2026-01-10_22:51:10,D10C20,0.4,40.0000,CloSpan,0.94,0.141,212,1025956,18,OK,median_of_3
+2026-01-10_22:51:11,D10C30,0.4,40.0000,TriBack-Clo-Java,0.13,0.13,172,95484,0,OK,median_of_3
+2026-01-10_22:51:17,D10C30,0.4,40.0000,BIDE+,1.31,1.098,200,1158216,105,OK,median_of_3

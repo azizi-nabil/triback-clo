@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "TriBack-Clo"
+message: "If you use this software, please cite the associated article."
+authors:
+  - family-names: Azizi
+    given-names: Nabil
+  - family-names: Ledmi
+    given-names: Makhlouf
+  - family-names: Ledmi
+    given-names: Abdeldjalil
+  - family-names: Souidi
+    given-names: Mohammed El Habib
+  - family-names: Boussalem
+    given-names: Mohamed
+  - family-names: Hamdi-Cherif
+    given-names: Aboubekeur
+doi: 10.1016/j.ins.2026.123788
+date-released: 2026-06-15

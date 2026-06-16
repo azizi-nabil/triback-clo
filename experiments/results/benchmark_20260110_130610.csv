@@ -1,0 +1,17 @@
+timestamp,dataset,ratio,minsup_pct,algorithm,wall_sec,mining_sec,cpu_pct,maxrss_kb,patterns,status,run_type
+2026-01-10_13:06:26,Kosarak,0.1,10.0000,TriBack-Clo,4.14,3.045,230,1226228,9,OK,median_of_3
+2026-01-10_13:06:50,Kosarak,0.05,5.0000,TriBack-Clo,5.89,4.796,197,1299884,33,OK,median_of_3
+2026-01-10_13:07:23,Kosarak,0.02,2.0000,TriBack-Clo,8.20,7.117,166,1224420,121,OK,median_of_3
+2026-01-10_13:08:12,Kosarak,0.01,1.0000,TriBack-Clo,11.94,10.847,149,1295240,383,OK,median_of_3
+2026-01-10_13:09:46,Kosarak,0.005,0.5000,TriBack-Clo,23.74,22.648,122,1229688,1618,OK,median_of_3
+2026-01-10_13:21:11,Kosarak,0.002,0.2000,TriBack-Clo,171.99,170.888,104,2602288,35864,OK,median_of_3
+2026-01-10_13:21:52,Kosarak,0.001,0.1000,TriBack-Clo,7200
+163
+1227996,7200
+with
+0,exited
+
+TIMEOUT,,0,,median_of_1
+2026-01-10_13:21:53,Kosarak25k,0.1,10.0000,TriBack-Clo,0.26,0.109,283,232192,9,OK,median_of_3
+2026-01-10_13:21:55,Kosarak25k,0.01,1.0000,TriBack-Clo,0.39,0.250,282,236512,382,OK,median_of_3
+2026-01-10_13:21:58,Kosarak25k,0.005,0.5000,TriBack-Clo,0.58,0.429,247,239328,1458,OK,median_of_3

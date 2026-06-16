@@ -1,0 +1,6 @@
+timestamp,profile,mode,case_family,dataset,ratio,minsup_pct,minsup_abs,variant,run_type,run_id,wall_sec,mining_sec,cpu_pct,maxrss_kb,internal_mem_mb,patterns,nodes_visited,subtrees_pruned_raw,nodes_gated,status,log_file
+20260330_223736,paper,quick,single_dense,SIGN,0.01,1.000000,8,Full,measured,1,305.818,305.818,0,0,1227.060890197754,37265723,79803670,12112103,0,OK,"experiments/logs_ablation/TriBack-Clo_SIGN_0.01_full_20260329_171944.log"
+20260330_223736,paper,quick,single_dense,SIGN,0.01,1.000000,8,NoPrune,measured,1,378.304,378.304,0,0,1227.4696044921875,37265723,99962672,14728858,10667867,OK,"experiments/logs_ablation/TriBack-Clo_SIGN_0.01_noprune_20260329_172527.log"
+20260330_223736,paper,quick,multi_sparse,D20C50,0.005,0.500000,100,Full,measured,1,195.529,195.529,0,0,416.85509490966797,482528,715242,285,38594,OK,"experiments/logs_ablation/TriBack-Clo_D20C50_0.005_full_20260329_173930.log"
+20260330_223736,paper,quick,multi_sparse,D20C50,0.005,0.500000,100,NoPrune,measured,1,198.487,198.487,0,0,414.90047454833984,482528,715309,319,38895,OK,"experiments/logs_ablation/TriBack-Clo_D20C50_0.005_noprune_20260329_174330.log"
+20260330_223736,paper,quick,multi_sparse,D20C50,0.005,0.500000,100,NoGate,measured,1,200.096,200.096,0,0,414.6928482055664,482528,715242,285,0,OK,"experiments/logs_ablation/TriBack-Clo_D20C50_0.005_nogate_20260329_174712.log"
