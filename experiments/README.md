@@ -48,8 +48,8 @@ Use `--help` on scripts that support it, especially `run_component_contribution_
 
 - `triback-clo-java/triback-clo.jar`: built with `cd triback-clo-java && bash build.sh`
 - `experiments/spmf.jar`: user-provided SPMF v2.64b jar
-- public real datasets placed under `experiments/datasets/`
-- IBM Quest generator binary for synthetic data, placed at `experiments/IBMGenerator/gen` or exposed through `IBM_GENERATOR`
+- single-itemset real datasets from the SPMF dataset repository, placed under `experiments/datasets/`
+- IBM Quest generator binary only for the multi-itemset synthetic families, placed at `experiments/IBMGenerator/gen` or exposed through `IBM_GENERATOR`
 
 For exact baseline policy and JVM settings, see `experiments/SPMF_BASELINE.md`.
 
@@ -79,9 +79,9 @@ experiments/
 └── README.md
 ```
 
-## Dataset Downloads
+## Single-Itemset Real Dataset Downloads
 
-Download public real datasets from the SPMF dataset repository and place them under `experiments/datasets/` using the names in `datasets/README.md`.
+Download the single-itemset real benchmark datasets from the SPMF dataset repository and place them under `experiments/datasets/` using the names in `datasets/README.md`.
 
 The main expected filenames are:
 
@@ -96,11 +96,11 @@ MSNBC_SPMF.txt
 MSNBC.txt
 ```
 
-Large real datasets are intentionally not committed to GitHub.
+Large real single-itemset datasets are intentionally not committed to GitHub.
 
-## Synthetic Data With IBMGenerator
+## Multi-Itemset Synthetic Data With IBMGenerator
 
-The synthetic itemset-sequence families are generated with IBM Quest-style configuration. The generator binary is not redistributed.
+IBMGenerator is used only for the multi-itemset synthetic families. The single-itemset real datasets above are downloaded from SPMF, not generated. The IBM Quest generator binary is not redistributed.
 
 Place the binary at:
 

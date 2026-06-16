@@ -1,10 +1,10 @@
 # Dataset Reconstruction Notes
 
-Large benchmark datasets are intentionally not committed. This directory contains small examples, generator configuration files, and instructions for reconstructing the datasets expected by the benchmark scripts.
+Large benchmark datasets are intentionally not committed. This directory contains small examples, IBMGenerator configuration files for multi-itemset synthetic datasets, and instructions for reconstructing the datasets expected by the benchmark scripts.
 
-## Real Datasets
+## Single-Itemset Real Datasets
 
-Download the public real datasets from the SPMF dataset repository and place them under `experiments/datasets/` with the filenames expected by the scripts:
+Download the public single-itemset real datasets from the SPMF dataset repository and place them under `experiments/datasets/` with the filenames expected by the scripts:
 
 | Paper family | Expected filename | Source / note |
 |---|---|---|
@@ -34,9 +34,9 @@ cd experiments
 head -n 25000 datasets/kosarak_sequences.txt > datasets/kosarak25k.txt
 ```
 
-## Synthetic Itemset-Sequence Families
+## Multi-Itemset Synthetic Families
 
-The paper synthetic families use IBM Quest-style sequence generator parameters. The public release includes:
+IBMGenerator is used only for the multi-itemset synthetic benchmark families. The single-itemset real datasets above are downloaded from SPMF. The public release includes:
 
 - `ibm_corr.ntpc` — generator configuration/reference file retained from the benchmark setup
 - `../generate_clofast_datasets.sh` — D5/D10/D20/D50 synthetic families
@@ -71,7 +71,7 @@ Generated datasets are written to:
 experiments/datasets/synthetic/clofast_paper/
 ```
 
-The generation scripts convert IBM `.data` files into the SPMF itemset-sequence format consumed by TriBack-Clo and the SPMF baselines.
+The generation scripts convert IBM `.data` files into the SPMF itemset-sequence format consumed by TriBack-Clo and the SPMF baselines for the multi-itemset experiments.
 
 ## Small Bundled Examples
 

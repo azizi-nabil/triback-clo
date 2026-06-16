@@ -21,7 +21,7 @@ The earlier Scala development/reference implementation is not included in this p
 - `docs/` — technical notes and verification material
 - `CITATION.cff` — citation metadata for the published article
 
-Large benchmark datasets are not committed. A selected raw-log bundle is included under `experiments/logs/selected-kosarak/`, and log-derived CSV/MD artifacts are included under `experiments/results/`. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations; see `experiments/datasets/README.md` and `experiments/logs/README.md`.
+Large benchmark datasets are not committed. A selected raw-log bundle is included under `experiments/logs/selected-kosarak/`, and log-derived CSV/MD artifacts are included under `experiments/results/`. Single-itemset real benchmark datasets should be downloaded from the SPMF dataset repository. Multi-itemset synthetic datasets can be regenerated with the IBMGenerator-based scripts/configurations; see `experiments/datasets/README.md` and `experiments/logs/README.md`.
 
 ## Requirements
 
