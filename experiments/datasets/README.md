@@ -44,7 +44,7 @@ IBMGenerator is used only for the multi-itemset synthetic benchmark families. Th
 - `../generate_scalability_datasets.sh` — D-scaling series
 - `generate_clofast_datasets.sh` — helper retained for smaller synthetic examples
 
-The IBM Quest generator binary is not redistributed. Place it at:
+The IBM Quest generator binary is not redistributed in this repository. Obtain IBMGenerator from `https://github.com/zakimjz/IBMGenerator`, build it with `make`, and place the resulting binary at:
 
 ```text
 experiments/IBMGenerator/gen

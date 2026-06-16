@@ -100,7 +100,7 @@ Large real single-itemset datasets are intentionally not committed to GitHub.
 
 ## Multi-Itemset Synthetic Data With IBMGenerator
 
-IBMGenerator is used only for the multi-itemset synthetic families. The single-itemset real datasets above are downloaded from SPMF, not generated. The IBM Quest generator binary is not redistributed.
+IBMGenerator is used only for the multi-itemset synthetic families. The single-itemset real datasets above are downloaded from SPMF, not generated. The IBM Quest generator binary is not redistributed in this repository; obtain it from the external IBMGenerator repository: `https://github.com/zakimjz/IBMGenerator`.
 
 Place the binary at:
 
