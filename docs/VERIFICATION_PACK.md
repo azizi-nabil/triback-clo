@@ -1,6 +1,6 @@
 # TriBack-Clo Verification Pack
 
-This document contains all source code files needed to audit algorithm consistency for the TriBack-Clo closed sequential pattern miner on itemset-sequences.
+This document is a historical Scala verification pack retained from the development/reference implementation. The public reproducibility path for the published experiments is the SPMF-compatible Java implementation under `triback-clo-java/`; use the top-level `README.md` and `experiments/README.md` for reproduction commands.
 
 ---
 

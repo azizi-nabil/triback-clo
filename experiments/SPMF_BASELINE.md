@@ -24,7 +24,7 @@ OpenJDK 21
 7200 s timeout per run
 ```
 
-The shell runners encode this policy directly:
+The manuscript-level policy is shown below. Some archived or continuation shell runners preserve campaign-specific heap caps in their headers (for example 70g or 90g); inspect the script header when reproducing a specific archived campaign:
 
 ```text
 experiments/run_benchmark.sh
