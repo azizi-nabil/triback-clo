@@ -1,0 +1,34 @@
+============================================================
+TriBack-Clo: Triple-pointer BackScan Closed Sequential Pattern Mining
+============================================================
+
+[INFO] Loading: /home/nabil/habilitation-project/project-root/spark-scala/experiments/datasets/kosarak_sequences.txt
+[INFO] Loaded in 1.81 seconds
+Database Statistics:
+  Sequences: 990,002
+  Total items: 8,019,015
+  Avg length: 8.1
+  Min/Max length: 1 / 2498
+  Max item ID: 41,270
+
+[INFO] Minimum support: 4951 (0.50%)
+[INFO] Vertical threshold: 100000
+[INFO] Adaptive switching: true
+
+[INFO] Starting mining...
+[APV] Frequent items: 156 (maxItem=41270)
+[APV] Position index built in 1062.9 ms
+[PROFILE] enumerate: 8.214757995s (3238 calls)
+[PROFILE] backward:  0.003438351s (1462 checks)
+[PROFILE] patterns:  1618
+[STORE-PROFILE] forwardScan: 4.685845951s (1619 calls)
+[STORE-PROFILE] backwardScan: 3.40843787s (1619 calls)
+[STORE-PROFILE] resultBuild: 0.0s
+[STORE-PROFILE] totalOccurrences: 19297675, itemUpdates: 85303693
+
+[RESULT] Found 1,618 closed patterns in 9.44 seconds
+[INFO] No output file specified. Use --output to save patterns.
+
+============================================================
+[TIMING] Total: 11.25 s (load: 1.81 s, mine: 9.44 s)
+============================================================

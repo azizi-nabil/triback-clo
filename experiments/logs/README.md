@@ -1,14 +1,35 @@
 # Raw Log Artifacts
 
-The paper states that complete raw logs were used to derive all reported tables and figures. The public repository includes the following log-derived artifacts:
+The paper's reported tables were derived from archived benchmark logs and post-processing summaries. This public repository includes two reproducibility layers:
+
+1. Selected raw logs that can be inspected directly.
+2. Log-derived CSV/Markdown artifacts for the broader benchmark campaign.
+
+## Included raw logs
+
+`experiments/logs/selected-kosarak/` contains 183 historical Kosarak benchmark logs recovered from the pre-rename benchmark campaign. The bundle includes TriBack-Clo and SPMF baseline runs for BIDE+, ClaSP, CloSpan, and CloFast across several support levels, with warmup and measured runs where available.
+
+The file list is recorded in:
+
+```text
+experiments/logs/selected-kosarak/MANIFEST.txt
+```
+
+These logs are included as selected raw evidence, not as the complete full-disk archive of every later campaign.
+
+## Included log-derived artifacts
+
+The broader paper results are represented by the following derived artifacts:
 
 - `experiments/results/configuration_manifest.csv` — run manifest with dataset, support, algorithm, run type, run id, output-equivalence group, and original log path
 - `experiments/results/raw_run_extract.csv` — run-level extracted measurements from archived logs
 - `experiments/results/run_variation_summary.csv` — retained run-to-run variation summary
-- `experiments/results/memory_comparison.csv` — memory comparison extracted from the archived runs
+- `experiments/results/memory_comparison.csv` — memory comparison extracted from archived runs
 - `experiments/results/*_results.csv` and `experiments/results/BENCHMARK_RESULTS*.md` — per-dataset and aggregated result tables
 
-The full raw log directories from the original campaigns are large and are not committed here. The scripts regenerate logs under directories such as:
+## Regenerating logs
+
+Full regenerated raw-log directories are created by the benchmark scripts under directories such as:
 
 ```text
 experiments/logs/

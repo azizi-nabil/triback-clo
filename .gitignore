@@ -4,6 +4,8 @@ experiments/spmf.jar
 *.class
 
 *.log
+!experiments/logs/selected-kosarak/
+!experiments/logs/selected-kosarak/*.log
 *.aux
 *.bbl
 *.blg

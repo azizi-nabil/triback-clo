@@ -1,0 +1,9 @@
+>/home/nabil/habilitation-project/project-root/spark-scala/spmf.jar
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at ca.pfv.spmf.algorithms.sequentialpatterns.clofast.model.SparseIdList.<init>(SparseIdList.java:40)
+	at ca.pfv.spmf.algorithms.sequentialpatterns.clofast.FastDataset.fromPrefixspanSource(FastDataset.java:222)
+	at ca.pfv.spmf.algorithms.sequentialpatterns.clofast.AlgoCloFast.runAlgorithm(AlgoCloFast.java:616)
+	at ca.pfv.spmf.algorithmmanager.descriptions.DescriptionAlgoCloFast.runAlgorithm(DescriptionAlgoCloFast.java:61)
+	at ca.pfv.spmf.gui.CommandProcessor.runAlgorithm(CommandProcessor.java:265)
+	at ca.pfv.spmf.gui.Main.processCommandLineArguments(Main.java:151)
+	at ca.pfv.spmf.gui.Main.main(Main.java:64)

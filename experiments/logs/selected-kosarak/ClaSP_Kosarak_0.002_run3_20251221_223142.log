@@ -1,0 +1,8 @@
+>/home/nabil/habilitation-project/project-root/spark-scala/spmf.jar
+Before removing NonClosed patterns there are 39464 patterns
+=============  Algorithm - STATISTICS =============
+ Total time ~ 928502 ms
+ Frequent closed sequences count : 35864
+ Join count : 1844465
+ Max memory (mb):37462.991790771484
+===================================================

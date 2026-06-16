@@ -17,11 +17,11 @@ The earlier Scala development/reference implementation is not included in this p
 - `experiments/results/` — selected archived result tables used for paper reporting
 - `experiments/datasets/` — small example inputs and dataset reconstruction notes
 - `experiments/SPMF_BASELINE.md` — exact SPMF baseline configuration used by the scripts
-- `experiments/logs/` — raw-log artifact notes and regeneration instructions
+- `experiments/logs/` — selected raw logs, artifact notes, and regeneration instructions
 - `docs/` — technical notes and verification material
 - `CITATION.cff` — citation metadata for the published article
 
-Large benchmark datasets and full raw log directories are not committed. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations; see `experiments/datasets/README.md`. Log-derived CSV/MD artifacts are included under `experiments/results/`; see `experiments/logs/README.md`.
+Large benchmark datasets are not committed. A selected raw-log bundle is included under `experiments/logs/selected-kosarak/`, and log-derived CSV/MD artifacts are included under `experiments/results/`. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations; see `experiments/datasets/README.md` and `experiments/logs/README.md`.
 
 ## Requirements
 

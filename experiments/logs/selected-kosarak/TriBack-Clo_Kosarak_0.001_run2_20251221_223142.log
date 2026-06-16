@@ -1,0 +1,46 @@
+============================================================
+TriBack-Clo: Triple-pointer BackScan Closed Sequential Pattern Mining
+============================================================
+
+[INFO] Loading: /home/nabil/habilitation-project/project-root/spark-scala/experiments/datasets/kosarak_sequences.txt
+[INFO] Loaded in 1.78 seconds
+Database Statistics:
+  Sequences: 990,002
+  Total items: 8,019,015
+  Avg length: 8.1
+  Min/Max length: 1 / 2498
+  Max item ID: 41,270
+
+[INFO] Minimum support: 991 (0.10%)
+[INFO] Vertical threshold: 100000
+[INFO] Adaptive switching: true
+
+[INFO] Starting mining...
+[APV] Frequent items: 1259 (maxItem=41270)
+[APV] Position index built in 6533.9 ms
+[PROGRESS] 100,000 DFS nodes, 43,981 patterns, 73.3s
+[PROGRESS] 200,000 DFS nodes, 86,163 patterns, 149.3s
+[PROGRESS] 300,000 DFS nodes, 117,734 patterns, 256.1s
+[PROGRESS] 400,000 DFS nodes, 151,007 patterns, 363.5s
+[PROGRESS] 500,000 DFS nodes, 181,454 patterns, 469.5s
+[PROGRESS] 600,000 DFS nodes, 217,072 patterns, 573.9s
+[PROGRESS] 700,000 DFS nodes, 252,922 patterns, 671.4s
+[PROGRESS] 900,000 DFS nodes, 321,347 patterns, 882.7s
+[PROGRESS] 1,200,000 DFS nodes, 430,101 patterns, 1184.8s
+[PROGRESS] 1,300,000 DFS nodes, 474,342 patterns, 1261.4s
+[PROGRESS] 1,400,000 DFS nodes, 521,660 patterns, 1324.4s
+[PROFILE] enumerate: 1309.50921161s (1418415 calls)
+[PROFILE] backward:  0.272409379s (586407 checks)
+[PROFILE] patterns:  529948
+[PROFILE] pruned:    37311 subtrees (BackScan)
+[STORE-PROFILE] forwardScan: 1121.11853547s (690552 calls)
+[STORE-PROFILE] backwardScan: 171.235461288s (587667 calls)
+[STORE-PROFILE] resultBuild: 0.0s
+[STORE-PROFILE] totalOccurrences: 945486532, itemUpdates: 39076025192
+
+[RESULT] Found 529,948 closed patterns in 1343.06 seconds
+[INFO] No output file specified. Use --output to save patterns.
+
+============================================================
+[TIMING] Total: 1344.84 s (load: 1.78 s, mine: 1343.06 s)
+============================================================
