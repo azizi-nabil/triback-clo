@@ -15,7 +15,14 @@ The file list is recorded in:
 experiments/logs/selected-kosarak/MANIFEST.txt
 ```
 
-These logs are included as selected raw evidence, not as the complete full-disk archive of every later campaign.
+Raw-log availability for all run paths recorded in the public result manifests is indexed in:
+
+```text
+experiments/logs/LOG_AVAILABILITY.csv
+experiments/logs/RAW_LOG_AVAILABILITY.md
+```
+
+These logs are all raw `.log` files recoverable from the local working tree and git history at public-release time. Later supplementary campaigns are represented by complete derived CSV/Markdown result artifacts when the original raw `.log` files were not available in the local archive.
 
 ## Included log-derived artifacts
 
