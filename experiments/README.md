@@ -1,119 +1,169 @@
 # TriBack-Clo Experiments
 
+This folder contains the benchmark scripts, post-processing scripts, archived result tables, selected raw logs, and dataset reconstruction notes used for the TriBack-Clo paper.
+
+The public release is Java-first: all paper experiment commands use `triback-clo-java/triback-clo.jar` and the SPMF-compatible entry point.
+
 ## Quick Start
 
-```bash
-# 1. Download/reconstruct datasets (see datasets/README.md)
-# 2. Copy SPMF v2.64b to this folder as spmf.jar
-# 3. Build the Java TriBack-Clo JAR
-cd ../triback-clo-java && bash build.sh
+From the repository root:
 
-# 4. Run experiments
-python run_experiments.py --experiment A
-./run_component_contribution_analysis.sh --profile journal --skip-existing
-python run_experiments.py --experiment all
+```bash
+# 1. Build TriBack-Clo
+cd triback-clo-java
+bash build.sh
+cd ..
+
+# 2. Add SPMF v2.64b for baselines and compilation support
+cp /path/to/spmf.jar experiments/spmf.jar
+
+# 3. Run a small bundled example
+java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar \
+  ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+  experiments/datasets/test_multi.txt /tmp/triback-output.txt 2
 ```
 
-For exact baseline policy, dataset reconstruction, raw-log artifacts, and ablation notes, see:
+For full benchmark reproduction, first reconstruct the datasets described in `experiments/datasets/README.md`.
 
-- `experiments/SPMF_BASELINE.md`
-- `experiments/datasets/README.md`
-- `experiments/logs/README.md`
-- `experiments/COMPONENT_ABLATION_CONTEXT.md`
+## Reproducibility Map
+
+| Purpose | Main script / artifact | Output location |
+|---|---|---|
+| Real-dataset benchmark sweep | `bash run_benchmark.sh DATASET [quick]` | `results/benchmark_*.csv`, `logs/` |
+| Complete real-dataset sweep | `bash run_benchmark.sh all` | `results/benchmark_*.csv`, `logs/` |
+| Missing/continuation runs | `bash run_missing_benchmarks.sh` | `results/`, `logs/` |
+| Multi-itemset synthetic benchmark | `bash run_benchmark_itemsets.sh` | `results/benchmark_itemsets_*.csv`, `logs_itemsets/` |
+| Continue multi-itemset runs | `bash run_benchmark_itemsets_continue.sh` | `results/benchmark_itemsets_continue_*.csv`, `logs_itemsets/` |
+| Component ablation | `bash run_component_contribution_analysis.sh --profile paper` | `results/component_ablation_*.csv`, `logs_ablation/` |
+| Journal-strength ablation | `bash run_component_contribution_analysis.sh --profile journal --skip-existing` | `results/component_ablation_*.csv`, `logs_ablation/` |
+| Eager-verification ablation | `bash run_eager_verification_ablation.sh` | `results/eager_verification_ablation_*.csv`, `logs_eager_verify/` |
+| S/I parameter grid | `bash generate_fig15_datasets.sh` then `bash run_benchmark_fig15.sh` | `logs_fig15/`, supplementary tables |
+| D-scaling series | `bash generate_scalability_datasets.sh` then `bash run_benchmark_scalability_D.sh` | `logs_scalability_D/`, supplementary tables |
+| Supplementary table generation | `python scripts/generate_supplementary_results.py` | generated supplementary tables/figures |
+| Log parsing / manifest reconstruction | `python parse_logs.py`, `python reconstruct_manifest.py` | `results/*.csv` |
+
+Use `--help` on scripts that support it, especially `run_component_contribution_analysis.sh`.
+
+## Required Inputs
+
+- `triback-clo-java/triback-clo.jar`: built with `cd triback-clo-java && bash build.sh`
+- `experiments/spmf.jar`: user-provided SPMF v2.64b jar
+- public real datasets placed under `experiments/datasets/`
+- IBM Quest generator binary for synthetic data, placed at `experiments/IBMGenerator/gen` or exposed through `IBM_GENERATOR`
+
+For exact baseline policy and JVM settings, see `experiments/SPMF_BASELINE.md`.
 
 ## Folder Structure
 
-```
+```text
 experiments/
-├── datasets/           # Put .txt files here
-│   ├── kosarak_sequences.txt
-│   ├── FIFA.txt
-│   ├── Bible.txt
-│   ├── Leviathan.txt
-│   └── BMS1_spmf.txt
+├── datasets/           # Small examples plus user-reconstructed benchmark datasets
+│   ├── test_multi.txt
+│   ├── example_walkthrough.txt
+│   ├── kosarak_sequences.txt      # user-provided, not committed
+│   ├── kosarak25k.txt             # derived from Kosarak, not committed
+│   ├── BMS2.txt                   # user-provided, not committed
+│   ├── FIFA.txt                   # user-provided, not committed
+│   ├── BIKE.txt                   # user-provided, not committed
+│   ├── SIGN.txt                   # user-provided, not committed
+│   ├── MSNBC_SPMF.txt             # user-provided, not committed
+│   └── synthetic/clofast_paper/   # generated synthetic datasets
 ├── logs/               # Selected raw logs and generated runtime logs
-├── results/            # JSON results
-├── scripts/            # Analysis scripts
-├── run_experiments.py  # Main automation
+├── logs_itemsets/      # Generated multi-itemset logs
+├── logs_ablation/      # Generated ablation logs
+├── logs_fig15/         # Generated S/I-grid logs
+├── logs_scalability_D/ # Generated D-scaling logs
+├── results/            # Archived and regenerated CSV/Markdown result artifacts
+├── scripts/            # Supplementary table/plot generation scripts
 ├── spmf.jar            # User-provided SPMF v2.64b jar
-└── README.md           # This file
+└── README.md
 ```
 
 ## Dataset Downloads
 
-Download public real datasets from the [SPMF Dataset Repository](http://www.philippe-fournier-viger.com/spmf/index.php?link=datasets.php). The full filename mapping is in `datasets/README.md`:
+Download public real datasets from the SPMF dataset repository and place them under `experiments/datasets/` using the names in `datasets/README.md`.
 
-| Dataset | Link | Size | Description |
-|---------|------|------|-------------|
-| **Kosarak** | [Download](http://www.philippe-fournier-viger.com/spmf/datasets/kosarak_sequences.txt) | 990K seqs | Volume stress test |
-| **FIFA** | [Download](http://www.philippe-fournier-viger.com/spmf/datasets/FIFA.txt) | 20K seqs | Length stress test |
-| **Bible** | [Download](http://www.philippe-fournier-viger.com/spmf/datasets/Bible.txt) | 36K seqs | Text/vocabulary test |
-| **Leviathan** | [Download](http://www.philippe-fournier-viger.com/spmf/datasets/Leviathan.txt) | 5.8K seqs | Density stress test |
-| **BMS-WebView-1** | [Download](http://www.philippe-fournier-viger.com/spmf/datasets/BMS1_spmf.txt) | 59K seqs | Classic BIDE benchmark |
+The main expected filenames are:
 
-## Experiments
+```text
+kosarak_sequences.txt
+kosarak25k.txt
+BMS2.txt
+FIFA.txt
+BIKE.txt
+SIGN.txt
+MSNBC_SPMF.txt
+MSNBC.txt
+```
 
-### A. Performance Cliff (Runtime vs Support)
-- Shows TriBack-Clo survives at low supports
-- X: Minsup (%), Y: Runtime (log scale)
-- Timeout: 30 minutes
+Large real datasets are intentionally not committed to GitHub.
 
-### B. Memory Efficiency
-- Proves O(support) memory vs O(occurrences)
-- Focus on dense datasets (Leviathan)
+## Synthetic Data With IBMGenerator
 
-### C. Scalability
-- Linear scaling with database size
-- Sample Kosarak at 20%, 40%, 60%, 80%, 100%
+The synthetic itemset-sequence families are generated with IBM Quest-style configuration. The generator binary is not redistributed.
 
-### D. Ablation Study
-- Use `run_component_contribution_analysis.sh` for the current component analysis
-- Includes `Full`, `NoPrune`, and `NoGate` variants
-- Recommended core profile: `--profile journal`
-- Reproducibility profile for the current manuscript table: `--profile paper`
-- Stronger conclusions come from low-support workloads where pruning/gating counters are substantially nonzero
+Place the binary at:
+
+```text
+experiments/IBMGenerator/gen
+```
+
+or set:
 
 ```bash
-# Recommended journal-strength ablation study
-bash run_component_contribution_analysis.sh --profile journal --skip-existing
+export IBM_GENERATOR=/path/to/IBMGenerator/gen
+```
 
-# Broader confirmation study
-bash run_component_contribution_analysis.sh --profile full --skip-existing
+Then run from `experiments/`:
 
-# Exact reproduction of the current manuscript table
-bash run_component_contribution_analysis.sh --profile paper --skip-existing
+```bash
+bash generate_clofast_datasets.sh
+bash generate_fig15_datasets.sh
+bash generate_scalability_datasets.sh
+```
+
+Generated files are written under:
+
+```text
+experiments/datasets/synthetic/clofast_paper/
 ```
 
 ## Manual Runs
 
 ```bash
 # TriBack-Clo
-java -Xmx50g -cp ../triback-clo-java/triback-clo.jar:spmf.jar \
+java -Xms16g -Xmx80g -cp ../triback-clo-java/triback-clo.jar:spmf.jar \
   ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
   datasets/FIFA.txt /dev/null 10%
 
 # SPMF BIDE+
-java -Xmx50g -jar spmf.jar run BIDE+ datasets/FIFA.txt output.txt 10%
+java -Xms16g -Xmx80g -jar spmf.jar run BIDE+ datasets/FIFA.txt output.txt 10%
 
 # SPMF ClaSP
-java -Xmx50g -jar spmf.jar run ClaSP datasets/FIFA.txt output.txt 10%
+java -Xms16g -Xmx80g -jar spmf.jar run ClaSP datasets/FIFA.txt output.txt 10%
 
 # SPMF CloSpan
-java -Xmx50g -jar spmf.jar run CloSpan datasets/FIFA.txt output.txt 10%
+java -Xms16g -Xmx80g -jar spmf.jar run CloSpan datasets/FIFA.txt output.txt 10%
 ```
 
-## Results Format
+Use `/dev/null` for count-only timing runs.
 
-Most paper-ready shell runners save CSV files and logs under `results/` and `logs/`. A selected historical raw-log bundle is included under `logs/selected-kosarak/`. Older Python utilities may save JSONL files such as `results/experiment_X.jsonl`:
+## Results And Logs
 
-```json
-{"dataset": "FIFA", "algorithm": "TriBack-Clo", "ratio": 0.1, "runtime_sec": 42.17, "patterns": 40642}
-```
+Most paper-ready shell runners save CSV files under `results/` and raw logs under `logs*` directories. The public repository includes:
 
-## Visualization
+- archived CSV/Markdown result artifacts under `results/`
+- selected historical raw Kosarak logs under `logs/selected-kosarak/`
+- a machine-readable raw-log availability index in `logs/LOG_AVAILABILITY.csv`
+- an explanation of raw-log coverage in `logs/RAW_LOG_AVAILABILITY.md`
 
-After running experiments:
+See `experiments/logs/README.md` for details.
+
+## Visualization And Supplementary Results
 
 ```bash
 python scripts/plot_results.py
+python scripts/generate_supplementary_results.py
 ```
+
+The plotting scripts consume the CSV artifacts in `results/` and regenerated log folders when present.

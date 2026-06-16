@@ -1,6 +1,6 @@
 # Dataset Reconstruction Notes
 
-Large benchmark datasets are intentionally not committed. This directory contains only small examples and generator configuration files.
+Large benchmark datasets are intentionally not committed. This directory contains small examples, generator configuration files, and instructions for reconstructing the datasets expected by the benchmark scripts.
 
 ## Real Datasets
 
@@ -15,19 +15,34 @@ Download the public real datasets from the SPMF dataset repository and place the
 | BIKE | `BIKE.txt` | SPMF dataset repository |
 | SIGN | `SIGN.txt` | SPMF dataset repository |
 | MSNBC | `MSNBC_SPMF.txt` | SPMF-compatible MSNBC sequence file |
-| MSNBC-small | `MSNBC.txt` | Filtered/smaller MSNBC file used by the archived benchmark scripts |
+| MSNBC-small | `MSNBC.txt` | Filtered/smaller MSNBC file used by archived benchmark scripts |
 
-The exact script filename expectations are encoded in `experiments/run_benchmark.sh` and `experiments/run_benchmark_clofast_single.sh`.
+The exact script filename expectations are encoded in:
+
+```text
+experiments/run_benchmark.sh
+experiments/run_benchmark_clofast_single.sh
+experiments/run_benchmark_itemsets.sh
+```
+
+## Creating Kosarak25k
+
+The benchmark scripts expect `kosarak25k.txt` as a small low-support stress subset. Recreate it from the full Kosarak file with:
+
+```bash
+cd experiments
+head -n 25000 datasets/kosarak_sequences.txt > datasets/kosarak25k.txt
+```
 
 ## Synthetic Itemset-Sequence Families
 
-The paper synthetic families use IBM-style sequence generator parameters. The public release includes:
+The paper synthetic families use IBM Quest-style sequence generator parameters. The public release includes:
 
 - `ibm_corr.ntpc` — generator configuration/reference file retained from the benchmark setup
 - `../generate_clofast_datasets.sh` — D5/D10/D20/D50 synthetic families
 - `../generate_fig15_datasets.sh` — S/I parameter grid
 - `../generate_scalability_datasets.sh` — D-scaling series
-- `generate_clofast_datasets.sh` — SPMF generator helper for smaller synthetic examples
+- `generate_clofast_datasets.sh` — helper retained for smaller synthetic examples
 
 The IBM Quest generator binary is not redistributed. Place it at:
 
@@ -41,7 +56,7 @@ or set:
 export IBM_GENERATOR=/path/to/IBMGenerator/gen
 ```
 
-Then run, for example:
+Then run from the repository root:
 
 ```bash
 cd experiments
@@ -50,4 +65,20 @@ bash generate_fig15_datasets.sh
 bash generate_scalability_datasets.sh
 ```
 
-Generated datasets are written to `experiments/datasets/synthetic/clofast_paper/`.
+Generated datasets are written to:
+
+```text
+experiments/datasets/synthetic/clofast_paper/
+```
+
+The generation scripts convert IBM `.data` files into the SPMF itemset-sequence format consumed by TriBack-Clo and the SPMF baselines.
+
+## Small Bundled Examples
+
+The following small examples are committed and can be used without external downloads:
+
+```text
+experiments/datasets/test_multi.txt
+experiments/datasets/example_walkthrough.txt
+experiments/datasets/execution_example_test.txt
+```
