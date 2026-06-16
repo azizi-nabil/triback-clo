@@ -7,15 +7,16 @@
 # All with constant: C=20, T=20, N=2.5, S=6, I=4
 # ==============================================================================
 
-cd /home/nabil/habilitation-project/TriBack-Clo/experiments
-IBM_GEN="./IBMGenerator/gen"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+IBM_GEN="${IBM_GENERATOR:-$SCRIPT_DIR/IBMGenerator/gen}"
 OUT="datasets/synthetic/clofast_paper"
 mkdir -p "$OUT"
 
 # Check for IBM Generator
 if [ ! -f "$IBM_GEN" ]; then
     echo "Error: IBM Generator binary not found at $IBM_GEN"
-    echo "Please ensure the generator is compiled."
+    echo "Set IBM_GENERATOR=/path/to/IBMGenerator/gen or place the binary at experiments/IBMGenerator/gen."
     exit 1
 fi
 

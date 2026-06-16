@@ -15,11 +15,13 @@ The earlier Scala development/reference implementation is not included in this p
 - `triback-clo-java/` — Java TriBack-Clo implementation and build script
 - `experiments/` — benchmark, ablation, parsing, plotting, and result-generation scripts
 - `experiments/results/` — selected archived result tables used for paper reporting
-- `experiments/datasets/` — small example inputs and synthetic-generation configuration
+- `experiments/datasets/` — small example inputs and dataset reconstruction notes
+- `experiments/SPMF_BASELINE.md` — exact SPMF baseline configuration used by the scripts
+- `experiments/logs/` — raw-log artifact notes and regeneration instructions
 - `docs/` — technical notes and verification material
 - `CITATION.cff` — citation metadata for the published article
 
-Large benchmark datasets are not committed. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations.
+Large benchmark datasets and full raw log directories are not committed. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations; see `experiments/datasets/README.md`. Log-derived CSV/MD artifacts are included under `experiments/results/`; see `experiments/logs/README.md`.
 
 ## Requirements
 
@@ -28,9 +30,11 @@ Large benchmark datasets are not committed. Public real datasets should be downl
 - Python 3 for experiment post-processing scripts
 - `spmf.jar` for benchmark baselines and Java compilation against SPMF classes
 
-Place SPMF as:
+Place SPMF v2.64b as:
 
     experiments/spmf.jar
+
+See `experiments/SPMF_BASELINE.md` for baseline commands and JVM policy.
 
 ## Build
 
