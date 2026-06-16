@@ -568,7 +568,7 @@ Only Gate 1 (BackScan witness) causes immediate subtree pruning, because a BackS
 Running TriBack-Clo on this example dataset produces:
 
 ```
-$ sbt "runMain tribackclo.TriBackClo_Main --input execution_example_test.txt --minsup 2"
+ -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo experiments/datasets/execution_example_test.txt /tmp/triback-output.txt 2
 
 ItemsetSequenceDatabase Statistics:
   Sequences: 4

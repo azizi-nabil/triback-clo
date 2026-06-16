@@ -6,7 +6,7 @@
 # CONFIGURATION
 # ---------------------------------------------------------
 
-TRIBACK_JAR="target/scala-2.13/triback-clo.jar"
+TRIBACK_JAR="triback-clo-java/triback-clo.jar"
 SPMF_JAR="experiments/spmf.jar"
 RESULTS_DIR="experiments/results"
 DATA_DIR="experiments/datasets/synthetic/clofast_paper"
@@ -64,8 +64,9 @@ run_test() {
         
         # Run Algorithm
         if [ "$algo" == "TriBack-Clo" ]; then
-             java -Xms$JVM_HEAP -Xmx$JVM_HEAP -cp "$TRIBACK_JAR" \
-                tribackclo.TriBackClo_Main --input "$file_path" --ratio "$support" \
+             java -Xms -Xmx -cp ":" \
+                ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+                "" /dev/null "" \
                 > "$LOG_FILE" 2>&1 &
              PID=$!
         elif [ "$algo" == "BIDE+" ]; then

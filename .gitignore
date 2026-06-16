@@ -1,7 +1,7 @@
-target/
-project/target/
+triback-clo-java/build/
+triback-clo-java/triback-clo.jar
+experiments/spmf.jar
 *.class
-*.jar
 
 *.log
 *.aux

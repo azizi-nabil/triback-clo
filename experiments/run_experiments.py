@@ -33,7 +33,7 @@ DATASETS_DIR = BASE_DIR / "datasets"
 LOGS_DIR = BASE_DIR / "logs"
 RESULTS_DIR = BASE_DIR / "results"
 
-TRIBACK_JAR = BASE_DIR.parent / "target" / "scala-2.13" / "triback-clo-6.0.jar"
+TRIBACK_JAR = BASE_DIR.parent / "triback-clo-java" / "triback-clo.jar"
 SPMF_JAR = BASE_DIR / "spmf.jar"
 
 # JVM Settings
@@ -146,13 +146,15 @@ def run_triback(dataset_file, ratio, timeout=TIMEOUT_SEC, ablation_no_prune=Fals
     
     cmd = [
         "java", f"-Xmx{JVM_HEAP}",
-        "-jar", str(TRIBACK_JAR),
-        "--input", str(dataset_file),
-        "--ratio", str(ratio)
+        "-cp", f"{TRIBACK_JAR}:{SPMF_JAR}",
+        "ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo",
+        str(dataset_file),
+        "/dev/null",
+        f"{ratio * 100}%"
     ]
     
     if ablation_no_prune:
-        cmd.append("--no-backscan")
+        cmd.append("--no-prune")
     
     print(f"  Running: {' '.join(cmd[:6])}...")
     
@@ -170,10 +172,8 @@ def run_triback(dataset_file, ratio, timeout=TIMEOUT_SEC, ablation_no_prune=Fals
         # Parse output
         patterns = None
         for line in result.stdout.split("\n"):
-            if "[RESULT] Found" in line:
-                # Extract pattern count
-                parts = line.split()
-                patterns = int(parts[2].replace(",", ""))
+            if "Pattern count" in line:
+                patterns = int(line.split(":")[-1].strip().replace(",", ""))
         
         return runtime, patterns, None
         

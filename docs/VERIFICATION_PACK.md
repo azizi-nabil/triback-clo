@@ -321,7 +321,7 @@ package tribackclo
 - Canonical I-extension: only items > lastItem
 
 ```scala
-package apvclofast
+package tribackclo
 
 import scala.collection.mutable
 
@@ -674,7 +674,7 @@ object ItemsetPointerStore {
 - Singleton fastpath using `singletonSeqs` (lines 121-136, 174-185)
 
 ```scala
-package apvclofast
+package tribackclo
 
 /**
  * BIDE-style fast closure checker using envelope windows + stamp intersections.
@@ -1137,7 +1137,7 @@ object ClosureCheckerFast {
 - General case: subset checks with merge-scan (lines 109-192)
 
 ```scala
-package apvclofast
+package tribackclo
 
 /**
  * Allocation-free envelope computation.
@@ -1361,7 +1361,7 @@ object EnvelopeComputer {
 - Reusable IntLists (lines 70-84)
 
 ```scala
-package apvclofast
+package tribackclo
 
 import java.util.Arrays
 
@@ -1459,7 +1459,7 @@ final class MinerContext(val maxItem: Int, val maxSid: Int, val maxSupport: Int)
 - singletonSeqs flat view (lines 70-88)
 
 ```scala
-package apvclofast
+package tribackclo
 
 /**
  * ItemsetSequence: Represents a sequence of itemsets.
@@ -1685,8 +1685,8 @@ Total: 7 closed patterns
 ### 7.3 Run Command
 
 ```bash
-java -Xmx4g -cp target/scala-2.13/triback-clo.jar \
-  tribackclo.TriBackClo_Main \
+java -Xmx4g -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar \
+  ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
   --input tiny_test.txt \
   --minsup 2 \
   --output /tmp/out.txt

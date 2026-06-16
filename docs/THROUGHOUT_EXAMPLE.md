@@ -149,7 +149,7 @@ echo "1 2 3 -1 4 5 -1 -2" >> test_minimal_5items.txt
 Run comparison:
 ```bash
 # TriBack-Clo
-java -cp target/scala-2.13/triback-clo.jar tribackclo.TriBackClo_Main --input test_minimal_5items.txt --minsup 2
+java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo test_minimal_5items.txt /tmp/triback-output.txt 2
 
 # BIDE+ (SPMF)
 java -jar experiments/spmf.jar run BIDE+ test_minimal_5items.txt bide_out.txt 100%
@@ -253,7 +253,7 @@ cat > /tmp/throughout_example_db.txt <<'EOF'
 2 -1 4 -1 -2
 EOF
 
-java -cp target/scala-2.13/triback-clo.jar tribackclo.TriBackClo_Main \
+java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
   --input /tmp/throughout_example_db.txt --minsup 2 --output /tmp/throughout_example_out.txt
 ```
 

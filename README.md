@@ -2,38 +2,69 @@
 
 Reproducibility repository for:
 
-Nabil Azizi et al., "TriBack-clo: Sound triple-witness BackScan for closed pattern mining in itemset-sequences", Information Sciences, 2026, Article 123788. DOI: https://doi.org/10.1016/j.ins.2026.123788
+Nabil Azizi, Makhlouf Ledmi, Abdeldjalil Ledmi, Mohammed El Habib Souidi, Mohamed Boussalem, and Aboubekeur Hamdi-Cherif, "TriBack-clo: Sound triple-witness BackScan for closed pattern mining in itemset-sequences", Information Sciences, 2026, Article 123788. DOI: https://doi.org/10.1016/j.ins.2026.123788
+
+## Scope
+
+This repository contains the SPMF-compatible Java implementation used for the experiments reported in the paper, together with benchmark scripts, post-processing scripts, selected result tables, and small example datasets.
+
+The earlier Scala development/reference implementation is not included in this public release because the paper experiments were performed with the Java JAR under the SPMF-compatible benchmark protocol.
 
 ## Contents
 
-- TriBack-Clo Scala implementation
-- SPMF-compatible Java implementation
-- Benchmark and post-processing scripts
-- Selected result tables
-- Small example datasets
+- `triback-clo-java/` — Java TriBack-Clo implementation and build script
+- `experiments/` — benchmark, ablation, parsing, plotting, and result-generation scripts
+- `experiments/results/` — selected archived result tables used for paper reporting
+- `experiments/datasets/` — small example inputs and synthetic-generation configuration
+- `docs/` — technical notes and verification material
+- `CITATION.cff` — citation metadata for the published article
 
-Large benchmark datasets are not committed. Public real datasets should be downloaded from the SPMF dataset repository, and synthetic datasets can be regenerated from the provided scripts/configurations.
+Large benchmark datasets are not committed. Public real datasets should be downloaded from the SPMF dataset repository. Synthetic datasets can be regenerated from the provided scripts/configurations.
+
+## Requirements
+
+- Java 21 or newer
+- Bash
+- Python 3 for experiment post-processing scripts
+- `spmf.jar` for benchmark baselines and Java compilation against SPMF classes
+
+Place SPMF as:
+
+    experiments/spmf.jar
 
 ## Build
 
 Run:
 
-    sbt assembly
+    cd triback-clo-java
+    bash build.sh
 
 This creates:
 
-    target/scala-2.13/triback-clo.jar
+    triback-clo-java/triback-clo.jar
 
-## Run
+## Run A Small Example
 
-Run:
+From the repository root:
 
-    java -cp target/scala-2.13/triback-clo.jar tribackclo.TriBackClo_Main --input experiments/datasets/test_multi.txt --minsup 2
+    java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar \
+      ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+      experiments/datasets/test_multi.txt /tmp/triback-output.txt 2
+
+Use `/dev/null` as the output path for count-only benchmark runs:
+
+    java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar \
+      ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+      experiments/datasets/test_multi.txt /dev/null 2
 
 ## Experiments
 
-See experiments/README.md.
+The paper benchmark scripts use the Java JAR in `triback-clo-java/triback-clo.jar` and SPMF in `experiments/spmf.jar`.
+
+See:
+
+    experiments/README.md
 
 ## Citation
 
-See CITATION.cff.
+See `CITATION.cff`.

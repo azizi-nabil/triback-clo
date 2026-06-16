@@ -61,7 +61,7 @@ trap cleanup SIGINT SIGTERM SIGHUP
 # ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-TRIBACK_JAR="$SCRIPT_DIR/../target/scala-2.13/triback-clo.jar"
+TRIBACK_CLASSPATH="$SCRIPT_DIR/../triback-clo-java/triback-clo.jar:$SCRIPT_DIR/spmf.jar"
 SPMF_JAR="$SCRIPT_DIR/spmf.jar"
 DATASETS_DIR="$SCRIPT_DIR/datasets"
 RESULTS_DIR="$SCRIPT_DIR/results"
@@ -160,19 +160,14 @@ run_once() {
         (
             /usr/bin/time -f "%e %P %M" -o "$time_file" \
                 timeout --signal=TERM --kill-after=10s $TIMEOUT_SEC \
-                java -Xms$JVM_HEAP_START -Xmx$JVM_HEAP_MAX $JVM_GC_FLAGS -cp "$TRIBACK_JAR" tribackclo.TriBackClo_Main \
-                --input "$dataset_file" --ratio "$ratio"
+                java -Xms$JVM_HEAP_START -Xmx$JVM_HEAP_MAX $JVM_GC_FLAGS -cp "$TRIBACK_CLASSPATH" \
+                ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+                "$dataset_file" /dev/null "$(awk -v r="$ratio" 'BEGIN {printf "%.6f%%", r * 100}')"
         ) > "$log_file" 2>&1
         exit_code=$?
         
         # Parse pattern count with awk (portable, no grep -P dependency)
-        patterns=$(awk '
-            /Found[[:space:]]+[0-9]/ {
-                gsub(/,/,"");
-                for(i=1;i<=NF;i++){
-                    if($i ~ /^[0-9]+$/ && $(i-1)=="Found"){ print $i; exit }
-                }
-            }' "$log_file" 2>/dev/null)
+        patterns=$(awk -F: '/Pattern count/ {gsub(/[^0-9]/,"",$2); print $2; exit}' "$log_file" 2>/dev/null)
         
         # Parse internal mining time (Mining: X.XXX s)
         mining_sec=$(awk '/Mining:/ { for(i=1;i<=NF;i++) if($i=="Mining:") print $(i+1) }' "$log_file" 2>/dev/null | head -1)
@@ -404,9 +399,9 @@ echo "Trials: $WARMUP_RUNS warmup + $MEASURED_RUNS measured (median)"
 echo "============================================================"
 
 # Check prerequisites
-if [ ! -f "$TRIBACK_JAR" ]; then
-    echo "[ERROR] TriBack-Clo JAR not found: $TRIBACK_JAR"
-    echo "        Run: cd .. && sbt assembly"
+if [ ! -f "$SCRIPT_DIR/../triback-clo-java/triback-clo.jar" ]; then
+    echo "[ERROR] TriBack-Clo JAR not found: $SCRIPT_DIR/../triback-clo-java/triback-clo.jar"
+    echo "        Run: cd ../triback-clo-java && bash build.sh"
     exit 1
 fi
 

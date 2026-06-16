@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * Exact envelope-based closure checker using stamp intersections.
  *
- * Java port aligned with the Scala reference implementation.
+ * Java implementation used for the SPMF-compatible public release.
  *
  * Key optimizations:
  * 1. No mutable.BitSet - uses stamp arrays

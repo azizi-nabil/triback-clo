@@ -5,8 +5,8 @@
 ```bash
 # 1. Download datasets (see links below)
 # 2. Copy spmf.jar to this folder
-# 3. Build TriBack-Clo JAR
-cd .. && sbt assembly
+# 3. Build the Java TriBack-Clo JAR
+cd ../triback-clo-java && bash build.sh
 
 # 4. Run experiments
 python run_experiments.py --experiment A
@@ -85,8 +85,9 @@ bash run_component_contribution_analysis.sh --profile paper --skip-existing
 
 ```bash
 # TriBack-Clo
-java -Xmx50g -jar ../target/scala-2.13/triback-clo-6.0.jar \
-  --input datasets/FIFA.txt --ratio 0.1
+java -Xmx50g -cp ../triback-clo-java/triback-clo.jar:spmf.jar \
+  ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo \
+  datasets/FIFA.txt /dev/null 10%
 
 # SPMF BIDE+
 java -Xmx50g -jar spmf.jar run BIDE+ datasets/FIFA.txt output.txt 10%
@@ -100,7 +101,7 @@ java -Xmx50g -jar spmf.jar run CloSpan datasets/FIFA.txt output.txt 10%
 
 ## Results Format
 
-Results are saved as JSONL in `results/experiment_X.jsonl`:
+Most paper-ready shell runners save CSV files and logs under `results/` and `logs/`. Older Python utilities may save JSONL files such as `results/experiment_X.jsonl`:
 
 ```json
 {"dataset": "FIFA", "algorithm": "TriBack-Clo", "ratio": 0.1, "runtime_sec": 42.17, "patterns": 40642}

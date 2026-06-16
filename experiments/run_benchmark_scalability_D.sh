@@ -10,8 +10,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Configuration
-SPMF_JAR="$PROJECT_DIR/spmf.jar"
-TRIBACK_CLASSPATH="$PROJECT_DIR/triback-clo-java/build:$SPMF_JAR"
+SPMF_JAR="$PROJECT_DIR/experiments/spmf.jar"
+TRIBACK_CLASSPATH="$PROJECT_DIR/triback-clo-java/triback-clo.jar:$SPMF_JAR"
 DATASET_DIR="$PROJECT_DIR/experiments/datasets/synthetic/clofast_paper"
 LOGS_DIR="$PROJECT_DIR/experiments/logs_scalability_D"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
