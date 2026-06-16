@@ -1,6 +1,7 @@
 cff-version: 1.2.0
 title: "TriBack-Clo"
-message: "If you use this software, please cite the associated article."
+message: "If you use this software, please cite the associated Information Sciences article."
+type: software
 authors:
   - family-names: Azizi
     given-names: Nabil
@@ -14,5 +15,26 @@ authors:
     given-names: Mohamed
   - family-names: Hamdi-Cherif
     given-names: Aboubekeur
-doi: 10.1016/j.ins.2026.123788
+repository-code: "https://github.com/azizi-nabil/triback-clo"
+url: "https://github.com/azizi-nabil/triback-clo"
+license: MIT
 date-released: 2026-06-15
+preferred-citation:
+  type: article
+  title: "TriBack-clo: Sound triple-witness BackScan for closed pattern mining in itemset-sequences"
+  authors:
+    - family-names: Azizi
+      given-names: Nabil
+    - family-names: Ledmi
+      given-names: Makhlouf
+    - family-names: Ledmi
+      given-names: Abdeldjalil
+    - family-names: Souidi
+      given-names: Mohammed El Habib
+    - family-names: Boussalem
+      given-names: Mohamed
+    - family-names: Hamdi-Cherif
+      given-names: Aboubekeur
+  journal: "Information Sciences"
+  year: 2026
+  doi: 10.1016/j.ins.2026.123788

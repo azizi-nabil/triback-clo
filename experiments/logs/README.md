@@ -1,6 +1,6 @@
 # Raw Log Artifacts
 
-The paper's reported tables were derived from archived benchmark logs and post-processing summaries. This public repository includes two reproducibility layers:
+The paper's reported tables were derived from archived benchmark logs and post-processing summaries. The public repository exposes the audit trail in two reproducibility layers:
 
 1. Selected raw logs that can be inspected directly.
 2. Log-derived CSV/Markdown artifacts for the broader benchmark campaign.
@@ -22,7 +22,7 @@ experiments/logs/LOG_AVAILABILITY.csv
 experiments/logs/RAW_LOG_AVAILABILITY.md
 ```
 
-These logs are all raw `.log` files recoverable from the local working tree and git history at public-release time. Later supplementary campaigns are represented by complete derived CSV/Markdown result artifacts when the original raw `.log` files were not available in the local archive.
+These logs are all raw `.log` files recoverable from the local working tree and git history at public-release time. Later supplementary campaigns are represented by complete derived CSV/Markdown result artifacts when the original raw `.log` files were not available in the local archive. The repository therefore documents raw-log coverage explicitly rather than implying that every historical raw log is public.
 
 ## Included log-derived artifacts
 

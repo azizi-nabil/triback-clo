@@ -2,7 +2,7 @@
 
 This directory contains technical notes, worked examples, verification notes, and performance-analysis material associated with TriBack-Clo.
 
-The public release is Java-first: the implementation used for the paper experiments is the SPMF-compatible Java implementation under `triback-clo-java/`. Some notes preserve development history or explanatory derivations, but commands for reproducing the paper should follow the top-level `README.md` and `experiments/README.md`.
+The public release is Java-first: the implementation used for the paper experiments is the SPMF-compatible Java implementation under `triback-clo-java/`. Some notes preserve development history or explanatory derivations, but commands for reproducing the paper should follow the top-level `README.md`, `REPRODUCIBILITY.md`, and `experiments/README.md`.
 
 Recommended entry points:
 

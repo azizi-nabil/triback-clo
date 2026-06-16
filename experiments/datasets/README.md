@@ -1,6 +1,6 @@
 # Dataset Reconstruction Notes
 
-Large benchmark datasets are intentionally not committed. This directory contains small examples, IBMGenerator configuration files for multi-itemset synthetic datasets, and instructions for reconstructing the datasets expected by the benchmark scripts.
+Large benchmark datasets are intentionally not committed. This directory contains small examples, an IBMGenerator reference artifact, and instructions for reconstructing the datasets expected by the benchmark scripts. The generator parameters used for the synthetic families are encoded in the scripts listed below.
 
 ## Single-Itemset Real Datasets
 
@@ -38,7 +38,7 @@ head -n 25000 datasets/kosarak_sequences.txt > datasets/kosarak25k.txt
 
 IBMGenerator is used only for the multi-itemset synthetic benchmark families. The single-itemset real datasets above are downloaded from SPMF. The public release includes:
 
-- `ibm_corr.ntpc` — generator configuration/reference file retained from the benchmark setup
+- `ibm_corr.ntpc` — IBMGenerator reference artifact retained from the benchmark setup
 - `../generate_clofast_datasets.sh` — D5/D10/D20/D50 synthetic families
 - `../generate_fig15_datasets.sh` — S/I parameter grid
 - `../generate_scalability_datasets.sh` — D-scaling series

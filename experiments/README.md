@@ -1,8 +1,8 @@
 # TriBack-Clo Experiments
 
-This folder contains the benchmark scripts, post-processing scripts, archived result tables, selected raw logs, and dataset reconstruction notes used for the TriBack-Clo paper.
+This folder contains the benchmark scripts, post-processing scripts, archived result artifacts, selected raw logs, and dataset reconstruction notes used for the TriBack-Clo paper.
 
-The public release is Java-first: all paper experiment commands use `triback-clo-java/triback-clo.jar` and the SPMF-compatible entry point.
+The public release is Java-first: all paper experiment commands use `triback-clo-java/triback-clo.jar` and the SPMF-compatible entry point. For the package-level scope statement, see `../REPRODUCIBILITY.md`.
 
 ## Quick Start
 
@@ -23,7 +23,7 @@ java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar \
   experiments/datasets/test_multi.txt /tmp/triback-output.txt 2
 ```
 
-For full benchmark reproduction, first reconstruct the datasets described in `experiments/datasets/README.md`.
+For full benchmark reproduction, first reconstruct the datasets described in `experiments/datasets/README.md`. Full campaigns can be long-running; use the `quick` modes first to validate the local setup.
 
 ## Reproducibility Map
 
@@ -49,7 +49,7 @@ Use `--help` on scripts that support it, especially `run_component_contribution_
 - `triback-clo-java/triback-clo.jar`: built with `cd triback-clo-java && bash build.sh`
 - `experiments/spmf.jar`: user-provided SPMF v2.64b jar
 - single-itemset real datasets from the SPMF dataset repository, placed under `experiments/datasets/`
-- IBM Quest generator binary only for the multi-itemset synthetic families, placed at `experiments/IBMGenerator/gen` or exposed through `IBM_GENERATOR`
+- IBMGenerator only for the multi-itemset synthetic families; obtain it from `https://github.com/zakimjz/IBMGenerator`, build `gen`, and place it at `experiments/IBMGenerator/gen` or expose it through `IBM_GENERATOR`
 
 For exact baseline policy and JVM settings, see `experiments/SPMF_BASELINE.md`.
 
