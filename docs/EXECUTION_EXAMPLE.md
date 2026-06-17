@@ -36,7 +36,7 @@ TriBack-Clo uses a **three-gate architecture** to efficiently mine closed sequen
 │  │ Check all possible same-support superpatterns:                 │    │
 │  │ • Backward S-prepend: [0, last(E₀))                            │    │
 │  │ • Backward I-augment: items in first element's matching sets   │    │
-│  │ • Middle S-insert: (last(Eₖ)+1, first(Eₖ₊₁)) for each gap      │    │
+│  │ • Middle S-insert: [first(Eₖ)+1, last(Eₖ₊₁)) for each gap      │    │
 │  │ • Middle I-augment: items in each element's matching sets      │    │
 │  │ If ALL pass → OUTPUT as closed pattern                         │    │
 │  │ If FAIL → do NOT output, but continue DFS into children        │    │
@@ -45,7 +45,7 @@ TriBack-Clo uses a **three-gate architecture** to efficiently mine closed sequen
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Important**: Only Gate 1 (BackScan) causes subtree pruning. Gate 3 (Envelope) failure just skips output — the algorithm continues to children.
+> **Important**: Only the temporal BackScan test causes subtree pruning. Local-gap, internal, forward-screening, and envelope failures skip output for the current node but continue DFS into children.
 
 ---
 
@@ -87,7 +87,7 @@ TriBack-Clo uses a **three-gate architecture** to efficiently mine closed sequen
 
 ## Full DFS Tree
 
-The tree below shows **all nodes TriBack-Clo actually visits**. Nodes under a Gate 1 prune are absent because the algorithm returns immediately.
+The tree below summarizes the most relevant visited nodes. Only temporal BackScan nodes are true subtree cuts. Local-gap and internal witnesses are current-node gates; their descendants remain part of the DFS search when frequent.
 
 ```
 Root (∅)
@@ -102,16 +102,16 @@ Root (∅)
 │   │   │   │   │                                  (I-ext c keeps sup=2)
 │   │   │   │   └─[I-ext c]→ ⟨(a)(ab)(bc)⟩ sup=2  🚫 Envelope fail (S-prepend {d})
 │   │   │   │
-│   │   │   └─[S-ext c]→ ⟨(a)(ab)(c)⟩ sup=2       ✂ Gate 1 PRUNE (local-gap {b})
+│   │   │   └─[S-ext c]→ ⟨(a)(ab)(c)⟩ sup=2       🚫 Local-gap gate {b}
 │   │   │
 │   │   ├─[S-ext b]→ ⟨(a)(a)(b)⟩ sup=2            ↪ NOT forward-closed
 │   │   │   │                                      (I-ext c keeps sup=2)
 │   │   │   └─[I-ext c]→ ⟨(a)(a)(bc)⟩ sup=2       🚫 Envelope fail (S-prepend {d})
 │   │   │
-│   │   └─[S-ext c]→ ⟨(a)(a)(c)⟩ sup=2            ✂ Gate 1 PRUNE (local-gap {b})
+│   │   └─[S-ext c]→ ⟨(a)(a)(c)⟩ sup=2            🚫 Local-gap gate {b}
 │   │
-│   ├─[S-ext b]→ ⟨(a)(b)⟩ sup=3                   ✂ Gate 1 PRUNE (local-gap {a})
-│   ├─[S-ext c]→ ⟨(a)(c)⟩ sup=2                   ✂ Gate 1 PRUNE (local-gap {b})
+│   ├─[S-ext b]→ ⟨(a)(b)⟩ sup=3                   🚫 Local-gap gate {a}
+│   ├─[S-ext c]→ ⟨(a)(c)⟩ sup=2                   🚫 Local-gap gate {b}
 │   │
 │   └─[I-ext b]→ ⟨(ab)⟩ sup=3                     🚫 Envelope fail (S-prepend {a})
 │       │
@@ -119,10 +119,10 @@ Root (∅)
 │       │   │                                      (I-ext c keeps sup=2)
 │       │   └─[I-ext c]→ ⟨(ab)(bc)⟩ sup=2         🚫 Envelope fail (S-prepend {d})
 │       │
-│       └─[S-ext c]→ ⟨(ab)(c)⟩ sup=2              ✂ Gate 1 PRUNE (local-gap {b})
+│       └─[S-ext c]→ ⟨(ab)(c)⟩ sup=2              🚫 Local-gap gate {b}
 │
-├─[S-ext b]→ ⟨(b)⟩ sup=3                          ✂ Gate 1 PRUNE (local-gap {a})
-├─[S-ext c]→ ⟨(c)⟩ sup=2                          ✂ Gate 1 PRUNE (local-gap {b})
+├─[S-ext b]→ ⟨(b)⟩ sup=3                          🚫 Local-gap gate {a}
+├─[S-ext c]→ ⟨(c)⟩ sup=2                          🚫 Local-gap gate {b}
 │
 └─[S-ext d]→ ⟨(d)⟩ sup=2                          ↪ NOT forward-closed
     │                                               (S-ext a keeps sup=2)
@@ -136,21 +136,21 @@ Root (∅)
     │   │   │   │   │                                (I-ext c keeps sup=2)
     │   │   │   │   └─[I-ext c]→ ⟨(d)(a)(ab)(bc)⟩ sup=2 ★ OUTPUT (closed)
     │   │   │   │
-    │   │   │   └─[S-ext c]→ ⟨(d)(a)(ab)(c)⟩ sup=2 ✂ Gate 1 PRUNE (local-gap {b})
+    │   │   │   └─[S-ext c]→ ⟨(d)(a)(ab)(c)⟩ sup=2 🚫 Local-gap gate {b}
     │   │   │
     │   │   ├─[S-ext b]→ ⟨(d)(a)(a)(b)⟩ sup=2     ↪ NOT forward-closed
     │   │   │   │                                   (I-ext c keeps sup=2)
     │   │   │   └─[I-ext c]→ ⟨(d)(a)(a)(bc)⟩ sup=2 🚫 Envelope fail (Middle I-augment: 3rd elem {a}→{ab})
     │   │   │
-    │   │   └─[S-ext c]→ ⟨(d)(a)(a)(c)⟩ sup=2     ✂ Gate 1 PRUNE (local-gap {b})
+    │   │   └─[S-ext c]→ ⟨(d)(a)(a)(c)⟩ sup=2     🚫 Local-gap gate {b}
     │   │
-    │   ├─[S-ext b]→ ⟨(d)(a)(b)⟩ sup=2            ✂ Gate 1 PRUNE (local-gap {a})
+    │   ├─[S-ext b]→ ⟨(d)(a)(b)⟩ sup=2            🚫 Local-gap gate {a}
     │   │
-    │   └─[S-ext c]→ ⟨(d)(a)(c)⟩ sup=2            ✂ Gate 1 PRUNE (local-gap {b})
+    │   └─[S-ext c]→ ⟨(d)(a)(c)⟩ sup=2            🚫 Local-gap gate {b}
     │
-    ├─[S-ext b]→ ⟨(d)(b)⟩ sup=2                   ✂ Gate 1 PRUNE (local-gap {a})
+    ├─[S-ext b]→ ⟨(d)(b)⟩ sup=2                   🚫 Local-gap gate {a}
     │
-    └─[S-ext c]→ ⟨(d)(c)⟩ sup=2                   ✂ Gate 1 PRUNE (local-gap {b})
+    └─[S-ext c]→ ⟨(d)(c)⟩ sup=2                   🚫 Local-gap gate {b}
 ```
 
 ### Legend
@@ -158,7 +158,8 @@ Root (∅)
 | Symbol | Meaning |
 |--------|---------|
 | ★ OUTPUT | Passes Gate 1, Gate 2 (forward-closed), and Gate 3 (envelope) |
-| ✂ Gate 1 PRUNE | BackScan witness found → subtree cut immediately |
+| ✂ Temporal prune | Temporal BackScan witness found → subtree cut immediately |
+| 🚫 Local/internal gate | Intra-itemset witness found → skip current output, continue DFS |
 | ↪ NOT forward-closed | Has same-support forward extension → envelope skipped |
 | 🚫 Envelope fail | Forward-closed, but exact verification finds same-support superpattern |
 
@@ -166,10 +167,10 @@ Root (∅)
 
 When S-extending to match item `x` at an itemset containing items < x:
 - If those smaller items appear in ALL supporting sequences' matched itemsets
-- Then they form a **local-gap witness** (same-support I-augment exists)
+- Then they form a **local-gap witness**: a same-support I-augment exists, so the current pattern is non-closed
 
 **Examples**:
-- ⟨(b)⟩ matches at {a,b} → item {a} < b exists in all SIDs → **witness {a}**
+- ⟨(b)⟩ matches at {a,b} → item {a} < b exists in all SIDs → **node-gating witness {a}**
 - ⟨(a)(ab)(b)⟩ matches 'b' at {b,c} → no items < b in {b,c} → **no witness** → passes Gate 1
 
 
@@ -337,7 +338,7 @@ S3:     0     0          1      1
 - S3: [0,0) = ∅
 - Intersection = ∅ → **No witness**
 
-*Gap S-insert* — `(last(E₀)+1, first(E₁))`:
+*Gap S-insert* — wide window `[first(E₀)+1, last(E₁))`:
 - S1: (1+1, 2) = [2,2) = ∅
 - S2: (1+1, 2) = [2,2) = ∅
 - S3: (0+1, 1) = [1,1) = ∅
@@ -553,7 +554,7 @@ When envelope verification fails:
 - The pattern is **not output** (it has a same-support superpattern)
 - DFS **continues to children** as normal
 
-Only Gate 1 (BackScan witness) causes immediate subtree pruning, because a BackScan witness implies ALL descendants also have the same backward extension.
+Only the temporal BackScan witness causes immediate subtree pruning, because that witness is stable for every descendant. Local-gap and internal witnesses are node-gating certificates only.
 
 ### 4. Why ⟨(a)(ab)(bc)⟩ Fails but ⟨(d)(a)(ab)(bc)⟩ Passes
 
@@ -604,7 +605,7 @@ Sample patterns:
 | Mining time | 0.007s | Excludes I/O |
 | **DFS Traversal** | | |
 | Nodes visited | 28 | All nodes entered in DFS |
-| Gate 1 prunes | 12 | Subtrees cut by BackScan |
+| Temporal prunes | 12 | Subtrees cut by temporal BackScan in this archived run |
 | Forward-closed nodes | ~7 | Reached Gate 2, passed to Gate 3 |
 | Envelope verifications | ~7 | Performed on ALL forward-closed nodes |
 | **Output** | | |
@@ -615,8 +616,8 @@ Sample patterns:
 
 | Optimization | Impact |
 |--------------|--------|
-| **Gate 1 pruning** | 12 subtrees cut → saves ~30+ potential node visits |
+| **Temporal pruning** | Subtrees cut when a temporal BackScan witness is present |
 | **Gate 2 skip** | ~9 non-forward-closed nodes skip envelope verification |
-| **Overall** | 21/28 nodes skipped envelope (12 Gate 1 prunes + ~9 not forward-closed) |
+| **Overall** | Most nodes avoid envelope verification through temporal pruning, forward screening, or node gating |
 
-The three-gate architecture ensures expensive envelope verification runs only on forward-closed nodes.
+The prune-screen-gate-verify architecture ensures expensive envelope verification runs only on forward-closed nodes that are not eliminated by node-gating witnesses.

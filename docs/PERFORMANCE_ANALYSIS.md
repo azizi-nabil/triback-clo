@@ -1,115 +1,54 @@
-# TriBack-Clo V2.0 Performance Analysis
+# TriBack-Clo Performance Interpretation
 
-## Executive Summary
+This note summarizes the performance interpretation of the accepted Information Sciences paper. It replaces older exploratory V1/V2 notes with the final paper-aligned view.
 
-TriBack-Clo V2.0 with BIDE-style BackScan pruning achieves **183x speedup** at minsup=25, becoming **3x faster than BIDE+**.
+## What The Performance Results Show
 
----
+TriBack-Clo is strongest in dense, low-support, or prune-dominant regimes where candidate-free temporal pruning and compact projection state reduce live work and memory pressure. The paper reports its strongest speed and memory gains at the difficult operating points where competing implementations time out, exhaust memory, or retain much larger working structures.
 
-## Performance Results (Kosarak25k, 25,000 sequences)
+The performance contribution is workload-sensitive rather than uniform:
 
-| minsup | Patterns | V1.0 | V2.0 | BIDE+ | V2.0 vs BIDE+ |
-|--------|----------|------|------|-------|---------------|
-| 75 | 3,972 | 0.95s | **0.64s** | 1.22s | **1.9x faster** |
-| 50 | 9,005 | 1.96s | **1.2s** | ~2s | **1.7x faster** |
-| 25 | 42,671 | 795s | **4.35s** | 13.6s | **3.1x faster** |
+- **Prune-dominant workloads** benefit most from Stage 1 temporal BackScan pruning.
+- **Gate-heavy multi-itemset workloads** benefit from Stage 2 local/internal node gating, which avoids unnecessary exact envelope checks without pruning descendants.
+- **Confirmation workloads** may show only small changes from pruning or gating; these are useful because they delimit where each component matters.
+- **Low-density or high-support workloads** can leave baseline methods competitive or faster, because the search tree is already small and exact envelope checks are less amortized.
 
----
+## How To Read The Memory Results
 
-## V2.0 Breakthrough: BackScan Pruning
+The memory improvements combine several implementation and theory choices:
 
-### Before vs After at minsup=25
+- compact 4-tuple projection state;
+- allocation-free stamp-array intersections;
+- lazy envelope verification;
+- temporal subtree pruning before child expansion;
+- Java/SPMF-compatible benchmark execution.
 
-| Metric | V1.0 (No Pruning) | V2.0 (BackScan) | Reduction |
-|--------|-------------------|-----------------|-----------|
-| **Runtime** | 795s | **4.35s** | 183x |
-| **DFS nodes** | 28,341,065 | **264,773** | 107x |
-| **Item updates** | 23.7 billion | **95 million** | 249x |
-| **Pruned subtrees** | 0 | **58,257** | - |
+The paper therefore treats memory savings as an empirical property of the full TriBack-Clo design. It does not claim that the witness theory alone explains every measured memory difference; the memory result should not be read as a pure theorem-only effect.
 
-### Why Pruning Works
+## Component Ablation Interpretation
 
-At minsup=25, without pruning:
-- 28M DFS nodes to explore
-- Each node scans suffixes, counting items
-- Total work: O(nodes × support × seqLen)
+The final component analysis separates three questions:
 
-With BackScan pruning:
-- 58,257 subtrees pruned early
-- Only 264K nodes actually enumerated
-- Most dead-end branches avoided
+- `--no-prune`: how much Stage 1 temporal subtree pruning matters;
+- `--no-gate`: how much Stage 2 local/internal node gating matters once forward screening remains active;
+- `--eager-verify`: how many exact-envelope calls are avoided by lazy placement.
 
----
+Rows that end in `TIMEOUT` are efficiency failures, not evidence of output disagreement. On workloads where compared variants complete, reported pattern counts match across variants.
 
-## Key Innovation: Correct Semi-Maximum Periods
+## Where To Find Exact Numbers
 
-### The Problem with Naive Backward Check
+Use the archived result artifacts rather than this narrative note for exact values:
 
-Our V1.0 backward check computed:
-```
-backwardCandidates = ∩ seq[0, endPos) for all SIDs
+```text
+experiments/results/BENCHMARK_RESULTS.md
+experiments/results/BENCHMARK_RESULTS_DUAL_MEM.md
+experiments/results/BENCHMARK_RESULTS_ITEMSETS.md
+experiments/results/run_variation_summary.csv
+experiments/results/memory_comparison.csv
 ```
 
-This is for **backward closure** (emit decision), NOT **subtree pruning**.
-Using it for pruning was **incorrect** (found 0 patterns instead of 3,972).
+The Supplementary Material in the accepted paper is the authoritative formatted source for complete tables.
 
-### The Correct BIDE Condition
+## Scope Boundary
 
-BIDE's BackScan uses **semi-maximum periods**:
-```
-semiMaxPeriod = seq[startPos, endPos-1]
-              = gap between parent pattern end and current item
-```
-
-A witness exists if:
-```
-∃ item e: e ∈ semiMaxPeriod(S) for ALL S in support
-```
-
-If witness exists → entire subtree prunable.
-
-### Implementation Change
-
-PointerStore now stores **triples** instead of pairs:
-```
-Before: (sid, endPos)          // Can't compute semi-max period
-After:  (sid, startPos, endPos) // startPos = parent's endPos
-```
-
----
-
-## Code Changes Summary
-
-| File | Change |
-|------|--------|
-| `PointerStore.scala` | Rewritten with triples, STRIDE=3, correct detectBackScanWitness |
-| `APVLocalMiner.scala` | Added prune gate before enumeration |
-| `OccurrenceStore.scala` | Added detectBackScanWitness to trait |
-
----
-
-## Profiling Comparison
-
-### V1.0 at minsup=25 (795s)
-```
-forwardScan: 591s (75%)
-backwardScan: 107s (13%)
-DFS nodes: 28,341,065
-itemUpdates: 23,767,762,890
-```
-
-### V2.0 at minsup=25 (4.35s)
-```
-forwardScan: 2.9s (67%)
-backwardScan: 0.5s (11%)
-DFS nodes: 264,773 (pruned 58,257)
-itemUpdates: 94,576,375
-```
-
----
-
-## Conclusion
-
-TriBack-Clo V2.0 is now competitive with or faster than BIDE+ across all minsup levels, while maintaining the same pattern count and correctness.
-
-The key insight: **Correct semi-maximum period tracking enables subtree pruning that cuts 99% of the search space at low minsup.**
+Performance comparisons use public SPMF v2.64b implementations and therefore reflect both algorithmic choices and implementation-level data structures. The paper's central claim is the sound prune/gate boundary for itemset-sequences, validated by exact counts and reproducible benchmark artifacts; speedups are reported as empirical outcomes under that implementation protocol.

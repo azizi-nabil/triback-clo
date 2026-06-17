@@ -16,7 +16,7 @@ Do not mix timing or memory results across the older Rocky Linux runs and the ne
   - Rocky Linux 9.7
   - HP Z8 G4 Workstation
   - 2 x Xeon Platinum 8160
-  - Reported in the paper at `docs/sn-article-template/triback-clo-paper.tex`
+  - Reported in the accepted paper and archived result summaries
 - Current rerun environment:
   - Debian 13 (trixie)
   - HP Z8 G4 Workstation
@@ -243,7 +243,7 @@ For the final ablation table:
 
 1. Open the new summary CSV in `experiments/results/`
 2. Identify the strongest cases for the main-paper table
-3. Update `docs/sn-article-template/triback-clo-paper.tex`
+3. Update the manuscript/source tables if this note is used for a future extension
 4. Regenerate the supplementary appendix if the ablation table changes materially
 
 Expected likely final paper subset:

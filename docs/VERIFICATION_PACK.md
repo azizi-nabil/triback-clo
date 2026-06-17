@@ -2,6 +2,8 @@
 
 This document is a historical Scala verification pack retained from the development/reference implementation. The public reproducibility path for the published experiments is the SPMF-compatible Java implementation under `triback-clo-java/`; use the top-level `README.md` and `experiments/README.md` for reproduction commands.
 
+Some embedded Scala snippets preserve earlier development terminology and should not be read as the normative paper statement. In particular, the accepted paper and Java implementation prune only on temporal BackScan witnesses, use local/internal witnesses only for current-node gating, and use the wide middle S-insert envelope window.
+
 ---
 
 ## Table of Contents

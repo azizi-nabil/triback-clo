@@ -1,8 +1,8 @@
-# Paper Fix: Wide Window for Middle S-Insert Closure Check
+# Historical Paper Fix: Wide Window for Middle S-Insert Closure Check
 
 ## Summary
 
-The paper (`triback-clo-paper.tex`) describes the **Tight Window** for middle S-insert closure checking in Section 7.2 and Algorithm 2. This formula is **incorrect for repeated items** and must be replaced with the **Wide Window**.
+This is a historical development note documenting a correction that has already been applied in the accepted Information Sciences version of the paper. Earlier drafts described a tight window for middle S-insert closure checking; the final paper and Java implementation use the wide window.
 
 ---
 
@@ -69,9 +69,9 @@ The wide window `[firstPos(g)+1, lastPos(g+1))` is the **minimal bounding range*
 
 ---
 
-## 4. Current (Buggy) Paper Content
+## 4. Former Draft Content Already Fixed
 
-### Section 7.2: "Tight forcing windows" (Lines 551-558)
+### Former Section Text
 ```latex
 \subsection{Tight forcing windows}
 
@@ -82,14 +82,14 @@ W_s(g)= [\,last_s(g)+1,\; first_s(g+1)\,).
 This window is tight: any item present in $W_s(g)$ for all supporting sequences yields a same-support insertion.
 ```
 
-### Algorithm 2: EnvelopeClosedExact (Line 592)
+### Former Algorithm Text
 ```latex
 \STATE $W_g \gets \bigcap_s \{\text{items in } [last_s(g)+1, first_s(g+1))\}$
 ```
 
 ---
 
-## 5. Required Changes
+## 5. Changes Applied In The Final Paper
 
 ### Change 1: Section Title (Line 551)
 ```diff
@@ -141,16 +141,11 @@ This window is tight: any item present in $W_s(g)$ for all supporting sequences 
 
 ## 7. Implementation Reference
 
-The fix in `ClosureCheckerFast.scala`:
+The final Java implementation uses the same rule in `ClosureCheckerFast.java`:
 
 ```scala
-// BEFORE (Buggy Tight Window)
-fromFn = (sidIdx, kk) => lastBuf(sidIdx * kk + gapIdx) + 1,
-toFn = (sidIdx, kk) => firstBuf(sidIdx * kk + gapIdx + 1),
-
-// AFTER (Correct Wide Window)
-fromFn = (sidIdx, kk) => firstBuf(sidIdx * kk + gapIdx) + 1,
-toFn = (sidIdx, kk) => lastBuf(sidIdx * kk + gapIdx + 1),
+int from = firstBuf[idx * k + gapIdx] + 1;
+int to = lastBuf[idx * k + gapIdx + 1];
 ```
 
 ---
