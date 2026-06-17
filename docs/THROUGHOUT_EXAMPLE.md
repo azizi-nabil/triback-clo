@@ -1,5 +1,7 @@
 # TriBack-Clo: PointerStore Creation Trace Example
 
+This note uses **PointerStore** as a conceptual name for the flat projection tuples carried by the miner. In the public Java release, these tuples are stored as flat `int[]` position buffers inside `AlgoTriBackClo`; there is no separate Scala `ItemsetPointerStore` class in this repository.
+
 ## Loading and Initialization Pipeline
 
 TriBack-Clo uses a multi-step initialization before mining begins:
@@ -7,9 +9,9 @@ TriBack-Clo uses a multi-step initialization before mining begins:
 | Step | What it does | I/O |
 | --- | --- | --- |
 | **Scan 1** (partial) | Sample first 1000 lines to detect singleton vs multi-item itemsets | File read (partial) |
-| **Scan 2** (full) | Parse entire file → `ItemsetSequenceDatabase` in memory | File read (full) |
-| **In-memory** | Create root `PointerStore` from DB (one tuple per sequence) | None |
-| **DFS Mining** | Extend PointerStores during pattern enumeration | None |
+| **Scan 2** (full) | Parse entire file with SPMF `SequenceDatabase`, then expose Java array views for mining | File read (full) |
+| **In-memory** | Create root conceptual `PointerStore` from DB (one tuple per sequence) | None |
+| **DFS Mining** | Extend conceptual PointerStores during pattern enumeration | None |
 
 ### Why two scans?
 
@@ -17,8 +19,8 @@ The first partial scan detects the dataset format to choose the most memory-effi
 
 | Dataset Type | Example | Storage Format |
 | --- | --- | --- |
-| **Singleton** | Kosarak | `Array[Array[Int]]` (flat) — avoids millions of 1-element arrays |
-| **Multi-item** | Retail | `Array[Array[Array[Int]]]` (nested) — preserves itemset structure |
+| **Singleton** | Kosarak | `int[][]` (flat) — avoids millions of 1-element arrays |
+| **Multi-item** | Retail | `int[][][]` (nested) — preserves itemset structure |
 
 ---
 
@@ -28,9 +30,9 @@ A **PointerStore** is a **single unified data structure** that stores all tuples
 
 **Internal representation:**
 
-```scala
-// One flat array with stride 4 (memory-efficient, cache-friendly)
-positions: Array[Int] = [sid1, start1, curr1, last1, sid2, start2, curr2, ...]
+```text
+// One flat int array with stride 4 (memory-efficient, cache-friendly)
+positions = [sid1, start1, curr1, last1, sid2, start2, curr2, last2, ...]
 ```
 
 ### Tuple Fields
@@ -116,7 +118,7 @@ For Local-gap witnesses (items $x < \max(P_k)$ in tail itemset `E[currentIdx]`) 
 - But we **cannot prune descendants** due to match-jump
 - So we **skip output/verification** for P, but still explore its children
 
-> **Implementation note:** In `detectNotClosedFast()`, the code also re-checks Temporal witnesses as a defensive measure, even though `detectBackScanPrune()` already checked them for subtree pruning. This is harmless (short-circuits immediately if found) and allows `detectNotClosedFast()` to be used standalone if needed.
+> **Implementation note:** In `detectNotClosedFast()`, the code also re-checks temporal witnesses as a defensive measure, even though `hasTemporalWitness()` already checked them for subtree pruning. This is harmless (short-circuits immediately if found) and allows `detectNotClosedFast()` to be used standalone if needed.
 
 ### BIDE+ Failure Case (Why Generalized Gating Matters)
 
@@ -303,7 +305,7 @@ $$
 P ⊕I x = ⟨P₁, P₂, ..., Pₖ ∪ {x}⟩
 $$
 - Requires: $x > lastItem$ (canonical ordering to avoid duplicates)
-- Counted **existentially** (implementation): for each supporting sequence $s, x$ is counted if there exists an event position $j \geq \text{currentIdx}(s)$` such that `$P_k \subseteq E_j^{(s)}$` and `$x \in E_j^{(s)}$`
+- Counted **existentially** (implementation): for each supporting sequence $s$, item $x$ is counted if there exists an event position $j \geq \text{currentIdx}(s)$ such that $P_k \subseteq E_j^{(s)}$ and $x \in E_j^{(s)}$
 - Example: $⟨(a)⟩ ⊕I b = ⟨(ab)⟩$ (only if there exists some tail occurrence at/after the match of `{a}` that contains both `a` and `b`)
 
 **Tree construction algorithm (simplified, see Step 2 for full details):**
@@ -321,8 +323,8 @@ DFS(pattern P, PointerStore):
          → OUTPUT pattern
     
     4. RECURSE into children:
-       For each frequent S-extension: DFS(P ⊕S x, childStore)
-       For each frequent I-extension: DFS(P ⊕I x, childStore)
+       Materialize frequent S-extension and I-extension children
+       Java traversal order: I-children first, then S-children
 ```
 
 **Key point:** S-extensions and I-extensions have different support because they impose different structural constraints on where `x` must appear.
@@ -331,7 +333,7 @@ DFS(pattern P, PointerStore):
 
 TriBack-Clo uses **stamp-based counting** in `enumerateExtensions()` to efficiently count support:
 
-```scala
+```text
 // For each supporting sequence of the parent pattern:
 for each tuple (sid, startIdx, currentIdx, lastItem) in PointerStore:
     
@@ -354,7 +356,7 @@ for each tuple (sid, startIdx, currentIdx, lastItem) in PointerStore:
 
 **After scanning all SIDs:**
 - `sExtSupport[x]` = number of sequences where `x` appears after `currentIdx`
-- `iExtSupport[x]` = number of sequences where `x > lastItem` co-occurs with the tail itemset in some event $j \geq \text{currentIdx}$`
+- `iExtSupport[x]` = number of sequences where `x > lastItem` co-occurs with the tail itemset in some event $j \geq \text{currentIdx}$
 
 **The stamp trick:** Using a unique `stamp` per SID avoids double-counting when an item appears multiple times in the same sequence. We only count the **first occurrence** per SID.
 
@@ -362,10 +364,10 @@ for each tuple (sid, startIdx, currentIdx, lastItem) in PointerStore:
 
 The distinction is based on **where the extension item is found** relative to `currentIdx`:
 
-```scala
+```text
 // I-extension: existential scan over tail occurrences at/after currentIdx
 for pos = currentIdx to seq.length:
-    val ev = seq(pos)
+    ev = seq(pos)
     if contains(lastItem) && containsAll(tailItemset):
         for item in ev:
             if item > lastItem:
@@ -495,7 +497,7 @@ Root (∅)
 6. **EXACT VERIFICATION** (lazy, only if all gates passed):
    - Run `EnvelopeClosedExact` → OUTPUT if closed
 
-7. **RECURSE into children** (S-extensions first, then I-extensions)
+7. **RECURSE into children** (the Java implementation materializes both child lists, then recurses I-extensions before S-extensions; this changes traversal order only, not the closed-pattern set)
 
 **Why this order?** The code defers Local/Internal gating until after enumeration because:
 - If forward-closed check fails (step 4), we skip output anyway → no need to run Local/Internal checks
@@ -683,7 +685,7 @@ Length-1 pattern:
 
 **Step 2 - Temporal BackScan Check:**
 ```
-Algorithm: detectBackScanPrune()
+Algorithm: temporal BackScan prune check (`hasTemporalWitness()`)
   For each SID, collect items in [startIdx, currentIdx):
     SID1: [0, 1) = pos 0 = {a, b}
     SID2: [0, 1) = pos 0 = {a}
@@ -950,7 +952,7 @@ If any such item appears in ALL SIDs → NOT closed
 
 ### Code Flow
 
-```scala
+```java
 // In ClosureCheckerFast.isClosedUsingEnvelopes():
 
 // 1. S-prepend: check [0, last[0])
@@ -960,14 +962,14 @@ if (hasCommonItemInRange(..., fromFn = 0, toFn = last[0])) return false
 if (hasCommonItemIPrepend(...)) return false
 
 // 3. S-insert for each gap g
-for (g <- 0 until k-1) {
+for (int g = 0; g < k - 1; g++) {
   if (hasCommonItemInRange(..., 
       fromFn = first[g] + 1, 
       toFn = last[g+1])) return false
 }
 
 // 4. I-insert for each element i
-for (i <- 0 until k) {
+for (int i = 0; i < k; i++) {
   if (hasCommonItemIInsert(...)) return false
 }
 
@@ -994,10 +996,10 @@ For singleton datasets (like Kosarak where each itemset has exactly one item):
 
 ---
 
-## PointerStore base structures (current implementation)
+## PointerStore base structures (public Java implementation)
 
-- For **singleton** datasets (Kosarak-style): the loader builds a flattened `Array[Array[Int]]` (`singletonSeqs`) and the miner scans plain integer arrays.
-- For **multi-item** datasets: TriBack-Clo performs **on-the-fly suffix scans** in `ItemsetPointerStore.enumerateExtensions()` and materializes child PointerStores via `MinerContext`’s touched-item lists (`sLists` / `iLists`).
+- For **singleton** datasets (Kosarak-style): the loader builds flattened `int[][]` sequence arrays and the miner scans plain integer arrays.
+- For **multi-item** datasets: TriBack-Clo performs **on-the-fly suffix scans** in `AlgoTriBackClo.enumerateExtensions()` and materializes child position buffers through touched-item lists (`sTouched` / `iTouched`), extension buffers (`sLists` / `iLists`), and per-depth child caches.
 
 (Conceptually, a positional inverted index could speed up some scans, but the current code keeps the representation simple and cache-friendly.)
 
@@ -1022,4 +1024,3 @@ For singleton datasets (like Kosarak where each itemset has exactly one item):
 | **I-prepend check** | Check itemsets at `[first[0], last[0]]` for backward I-merge witness |
 | **S-insert check** | Check gaps `[first[g]+1, last[g+1])` for middle S-insert witness |
 | **I-insert check** | Check itemsets at `[first[i], last[i]]` for middle I-merge witness |
-
