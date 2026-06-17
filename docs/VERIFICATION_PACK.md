@@ -1,12 +1,14 @@
-# TriBack-Clo Verification Pack
+# Historical Scala Verification Pack (Not The Public Implementation)
 
-This document is a historical Scala verification pack retained from the development/reference implementation. The public reproducibility path for the published experiments is the SPMF-compatible Java implementation under `triback-clo-java/`; use the top-level `README.md` and `experiments/README.md` for reproduction commands.
+This document is a historical Scala verification pack retained from the development/reference implementation. It does not mean that Scala source is included in this public release. The public reproducibility path for the published experiments is the SPMF-compatible Java implementation under `triback-clo-java/`; use the top-level `README.md` and `experiments/README.md` for reproduction commands.
 
 Some embedded Scala snippets preserve earlier development terminology and should not be read as the normative paper statement. In particular, the accepted paper and Java implementation prune only on temporal BackScan witnesses, use local/internal witnesses only for current-node gating, and use the wide middle S-insert envelope window.
 
 ---
 
 ## Table of Contents
+
+The Scala filenames below refer to archived development snapshots embedded in this note for audit context; they are not tracked source files in the public repository.
 
 1. [TriBackClo.scala](#1-tribackcloscala) - DFS miner, prune gates, closure logic
 2. [ItemsetPointerStore.scala](#2-itemsetpointerstorscala) - 4-tuple store, BackScan, extension enumeration

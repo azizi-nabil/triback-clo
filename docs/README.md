@@ -8,6 +8,6 @@ Recommended entry points:
 
 - `ALGORITHM_PAPER.md` — compact algorithm description
 - `THROUGHOUT_EXAMPLE.md` — worked itemset-sequence example
-- `VERIFICATION_PACK.md` — historical Scala verification notes retained for audit context
+- `VERIFICATION_PACK.md` — historical Scala verification note; not part of the Java public implementation
 - `RELATION_TO_BIDE_2007.md` — positioning relative to BIDE
 - `EXPERIMENTS.md` and `PERFORMANCE_ANALYSIS.md` — experiment notes and archived interpretation
