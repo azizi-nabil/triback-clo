@@ -6,7 +6,7 @@ This note captures the reasoning, settings, environment caveats, and current run
 
 ## Goal
 
-Produce a journal-strength ablation study for TriBack-Clo by rerunning `Full`, `NoPrune`, and `NoGate` on a single software/hardware stack, then updating the paper with stronger evidence than the current `SIGN + D20C50` subsection.
+Produce a journal-ready ablation study for TriBack-Clo by rerunning `Full`, `NoPrune`, and `NoGate` on a single software/hardware stack, then updating the paper with evidence drawn from the validated component-analysis profile.
 
 ## Important Environment Note
 
@@ -28,7 +28,7 @@ Safe to compare across OS:
 - `Subtrees pruned`
 - `Nodes gated`
 
-Not safe to mix in one final publishable table:
+Not safe to mix in one final timing or memory table:
 - runtime
 - external memory / MaxRSS
 - JVM memory figures used as timing-memory evidence
@@ -46,8 +46,8 @@ The ablation runner is:
 Profiles:
 
 - `paper`
-  - exact reproduction of the current manuscript table
-  - weak scientifically, kept only for reproducibility
+  - exact reproduction of the earlier manuscript table
+  - retained for reproducibility and historical comparison
 - `journal`
   - recommended core study for the main paper
   - best balance of strength vs runtime
@@ -147,7 +147,7 @@ bash experiments/run_component_contribution_analysis.sh --profile journal
 # Broader supplementary-strength study
 bash experiments/run_component_contribution_analysis.sh --profile full
 
-# Reproduce the old manuscript table only
+# Reproduce the earlier manuscript table only
 bash experiments/run_component_contribution_analysis.sh --profile paper
 
 # Show cases without running them
@@ -174,7 +174,7 @@ Expected outputs:
 
 ## Archived Old-Machine Full Baselines
 
-These values are from the older archived benchmark logs and correspond to the `Full` baseline for the datasets used by `--profile full`. They are useful for sanity checking and historical comparison, but they should not be mixed with new Debian `NoPrune` / `NoGate` timings in the final publishable ablation table.
+These values are from the older archived benchmark logs and correspond to the `Full` baseline for the datasets used by `--profile full`. They are useful for sanity checking and historical comparison, but they should not be mixed with new Debian `NoPrune` / `NoGate` timings in the final ablation table.
 
 | Dataset | Ratio | Old timestamp set | Wall (s) | Mining (s) | Internal peak mem (MB) | Patterns | Nodes visited | Pruned | Gated |
 |---------|-------|-------------------|----------|------------|------------------------|----------|---------------|--------|-------|
@@ -213,7 +213,7 @@ Earlier ablation batch:
 
 - `experiments/logs_ablation/20260330_225444/`
 
-is broken and should not be used for final evidence.
+is excluded from final evidence because the archived run was incomplete or invalid.
 
 Cause:
 - the runner assumed `/usr/bin/time` existed
@@ -235,7 +235,7 @@ bash experiments/run_component_contribution_analysis.sh --profile full --skip-ex
 
 Use `--skip-existing` only for resuming or exploratory work on the same stack.
 
-For the final publishable ablation:
+For the final ablation table:
 - prefer a clean same-stack run
 - do not mix reused `Full` results from another OS with new variant runs
 
@@ -258,9 +258,9 @@ Expected likely final paper subset:
 If starting a new chat, provide this summary:
 
 - We are revising the `Component Contribution Analysis` subsection.
-- Old `SIGN + D20C50` evidence is too weak.
+- Earlier `SIGN + D20C50` evidence is retained only as historical context.
 - Stronger selected datasets are `SIGN 1%`, `Kosarak25k 0.05%`, `D20C20 0.1%`, and `D5N1 0.4%`.
-- Final timed comparisons must be rerun on one OS stack only.
+- Final timed comparisons should be reported from one OS stack only.
 - Current full ablation run started on Debian at timestamp `20260330_230918`.
 - Main runner is `experiments/run_component_contribution_analysis.sh`.
 - Final inputs for the paper should come from the newest `component_ablation_summary_*.csv`.
