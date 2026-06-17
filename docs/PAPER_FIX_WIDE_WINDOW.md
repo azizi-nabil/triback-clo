@@ -18,7 +18,7 @@ The BIDE algorithm [Wang & Han, 2004] checks if a pattern can be extended withou
 | Window | Formula | Represents |
 |--------|---------|------------|
 | **Tight** | `[lastPos(g)+1, firstPos(g+1))` | Intersection of all gaps |
-| **Wide** | `[firstPos(g)+1, lastPos(g+1))` | Union of all gaps |
+| **Wide** | `[firstPos(g)+1, lastPos(g+1))` | Envelope range covering possible gap positions |
 
 ---
 
@@ -65,7 +65,7 @@ The BIDE property requires existential quantifier (∃ embedding), not universal
 
 ### Correctness Proof Sketch
 
-The wide window `[firstPos(g)+1, lastPos(g+1))` is the **minimal bounding range** containing all possible gap positions. Any item in this range across all sequences must appear in at least one valid embedding's gap per sequence → correct closure decision.
+The wide window `[firstPos(g)+1, lastPos(g+1))` is the envelope range used by the final proof and implementation for middle S-insert witnesses. Intersecting items over this range detects same-support insertions under the first/last envelope semantics, while the tight window can miss valid insertions when repeated items create multiple feasible embeddings.
 
 ---
 
@@ -143,7 +143,7 @@ This window is tight: any item present in $W_s(g)$ for all supporting sequences 
 
 The final Java implementation uses the same rule in `ClosureCheckerFast.java`:
 
-```scala
+```java
 int from = firstBuf[idx * k + gapIdx] + 1;
 int to = lastBuf[idx * k + gapIdx + 1];
 ```

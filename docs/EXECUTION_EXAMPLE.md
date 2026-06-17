@@ -6,32 +6,32 @@ This document traces the complete execution of TriBack-Clo on a small database t
 
 ## Algorithm Overview
 
-TriBack-Clo uses a **three-gate architecture** to efficiently mine closed sequential patterns:
+TriBack-Clo uses a **prune-screen-gate-verify architecture** to efficiently mine closed sequential patterns:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                        TriBack-Clo DFS Node Processing                 │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│  Gate 1: BackScan Pruning and Gating (DFS-level)                           │
+│  Stage 1: Temporal BackScan pruning                                      │
   ┌─────────────────────────────────────────────────────────────────┐    │
   │ 1. Temporal: Item in [startIdx, currentIdx) for ALL?            │    │
   │    If YES → PRUNE entire subtree immediately                    │    │
-  │                                                                 │    │
-  │ 2. Local-gap: Item < maxItem in tail itemset for ALL?           │    │
-  │    If YES → GATE (skip output), continue search                 │    │
-  │                                                                 │    │
-  │ 3. Internal: Item in a previous itemset for ALL?                │    │
-  │    If YES → GATE (skip output), continue search                 │    │
   └─────────────────────────────────────────────────────────────────┘    │
 │                              ↓ NO                                       │
-│  Gate 2: Forward-Closed Check                                           │
+│  Stage 2: Forward-Closed Check                                          │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
 │  │ Does any extension have same support as current pattern?       │    │
 │  │ If YES → NOT forward-closed → skip envelope, continue DFS      │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 │                              ↓ NO (forward-closed)                      │
-│  Gate 3: Envelope Verification                                          │
+│  Stage 3: Local/internal node gating                                    │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │ Local-gap or internal intra-itemset witness for ALL?           │    │
+│  │ If YES → GATE current node only, continue DFS                  │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                              ↓ NO                                       │
+│  Stage 4: Envelope Verification                                         │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
 │  │ Check all possible same-support superpatterns:                 │    │
 │  │ • Backward S-prepend: [0, last(E₀))                            │    │
@@ -45,7 +45,8 @@ TriBack-Clo uses a **three-gate architecture** to efficiently mine closed sequen
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-> **Important**: Only the temporal BackScan test causes subtree pruning. Local-gap, internal, forward-screening, and envelope failures skip output for the current node but continue DFS into children.
+> **Important**: Only the temporal BackScan test causes subtree pruning. Forward-screening, local/internal node gating, and envelope failures skip output for the current node but continue DFS into children.
+> The detailed trace sometimes reports local/internal witness conditions next to the projection state for readability; the Java implementation invokes those node gates after forward screening and only for forward-closed nodes.
 
 ---
 
@@ -157,7 +158,7 @@ Root (∅)
 
 | Symbol | Meaning |
 |--------|---------|
-| ★ OUTPUT | Passes Gate 1, Gate 2 (forward-closed), and Gate 3 (envelope) |
+| ★ OUTPUT | Passes temporal pruning, forward screening, node gating, and envelope verification |
 | ✂ Temporal prune | Temporal BackScan witness found → subtree cut immediately |
 | 🚫 Local/internal gate | Intra-itemset witness found → skip current output, continue DFS |
 | ↪ NOT forward-closed | Has same-support forward extension → envelope skipped |
@@ -171,7 +172,7 @@ When S-extending to match item `x` at an itemset containing items < x:
 
 **Examples**:
 - ⟨(b)⟩ matches at {a,b} → item {a} < b exists in all SIDs → **node-gating witness {a}**
-- ⟨(a)(ab)(b)⟩ matches 'b' at {b,c} → no items < b in {b,c} → **no witness** → passes Gate 1
+- ⟨(a)(ab)(b)⟩ matches 'b' at {b,c} → no items < b in {b,c} → **no local-gap witness**
 
 
 ---
@@ -186,13 +187,13 @@ When S-extending to match item `x` at an itemset containing items < x:
 **PointerStore**:
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    0          1          a         0      ← For first element, startIdx = 0 by definition
-S2:    0          1          a         0
-S3:    0          0          a         0
-S4:    0          0          a         0
+S1:    0          1          a      ← For first element, startIdx = 0 by definition
+S2:    0          1          a
+S3:    0          0          a
+S4:    0          0          a
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — check items in `[startIdx, currentIdx)`:
 - S1: [0,1) = position 0 = {d}
@@ -202,12 +203,9 @@ S4:    0          0          a         0
 
 **Intersection**: {d} ∩ {d} ∩ ∅ ∩ ∅ = **∅**
 
-*Intra-itemset witness* — item < lastItem in the same matched itemset:
-- Items < a in current itemset? No items < a exist.
+**Result**: No temporal witness → continue (no subtree pruning). Local/internal node gates are checked only after forward screening.
 
-**Result**: No witness → continue (no subtree pruning)
-
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 Enumerate extensions from each SID's suffix after currentIdx:
 - S1: positions 2,3 → {a,b,c}
@@ -219,7 +217,11 @@ Extension supports: a→3, b→3, c→2
 
 **Parent support = 4, no extension has support 4** → Forward-closed = YES
 
-**Gate 3: Envelope Verification**
+**Stage 3: Local/Internal Node Gate**
+
+No local-gap or internal witness applies to ⟨(a)⟩ → continue.
+
+**Stage 4: Envelope Verification**
 
 Compute envelopes for element E₀ = {a}:
 ```
@@ -260,12 +262,12 @@ S4:      0         0       ← only one 'a' at position 0
 **PointerStore**:
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    2          2          a         0      ← startIdx = parent_currentIdx + 1 = 1+1 = 2
-S2:    2          2          a         0
-S3:    1          1          a         0      ← startIdx = 0+1 = 1
+S1:    2          2          a      ← startIdx = parent_currentIdx + 1 = 1+1 = 2
+S2:    2          2          a
+S3:    1          1          a      ← startIdx = 0+1 = 1
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[startIdx, currentIdx)`:
 - S1: [2,2) = ∅
@@ -274,7 +276,7 @@ S3:    1          1          a         0      ← startIdx = 0+1 = 1
 
 **All empty** → No witness → continue
 
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 I-extension by 'b' (b > a in current itemset {a,b}):
 - S1,S2,S3 all have 'b' at currentIdx → support = 3 = parent support
@@ -292,12 +294,12 @@ I-extension by 'b' (b > a in current itemset {a,b}):
 **PointerStore** (I-extension preserves startIdx and currentIdx):
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    2          2          b         1      ← I-ext: unchanged startIdx/currentIdx
-S2:    2          2          b         1
-S3:    1          1          b         1
+S1:    2          2          b      ← I-ext: unchanged startIdx/currentIdx
+S2:    2          2          b
+S3:    1          1          b
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[startIdx, currentIdx)`:
 - S1: [2,2) = ∅
@@ -306,11 +308,9 @@ S3:    1          1          b         1
 
 **All empty** → No witness
 
-*Intra-itemset check*: No item $x < b$ ($x \neq a$) in matched itemsets.
+**Result**: No temporal witness → continue
 
-**Result**: No witness → continue
-
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 S-extensions after currentIdx:
 - S1: position 3 = {b,c} → candidates b, c
@@ -321,7 +321,11 @@ Extension supports: b→2, c→2
 
 **Parent support = 3, no extension has support 3** → Forward-closed = YES
 
-**Gate 3: Envelope Verification**
+**Stage 3: Local/Internal Node Gate**
+
+No item $x < b$ with $x \notin \{a,b\}$ appears in every matched tail itemset, and there is no internal witness → continue.
+
+**Stage 4: Envelope Verification**
 
 Envelopes:
 ```
@@ -357,12 +361,12 @@ S3:     0     0          1      1
 **PointerStore**:
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    3          3          b         0      ← startIdx = parent_currentIdx + 1 = 2+1 = 3
-S2:    3          3          b         0
+S1:    3          3          b      ← startIdx = parent_currentIdx + 1 = 2+1 = 3
+S2:    3          3          b
 ```
 (S3 drops — no positions after 1)
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[startIdx, currentIdx)`:
 - S1: [3,3) = ∅
@@ -370,7 +374,7 @@ S2:    3          3          b         0
 
 **Empty** → No witness → continue
 
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 I-extension by 'c' (c > b in current itemset {b,c}):
 - S1,S2 both have 'c' at position 3 → support = 2 = parent support
@@ -388,11 +392,11 @@ I-extension by 'c' (c > b in current itemset {b,c}):
 **PointerStore** (I-extension preserves startIdx/currentIdx):
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    3          3          c         1
-S2:    3          3          c         1
+S1:    3          3          c
+S2:    3          3          c
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[startIdx, currentIdx)`:
 - S1: [3,3) = ∅
@@ -400,17 +404,19 @@ S2:    3          3          c         1
 
 **Empty** → No witness
 
-*Intra-itemset check*: No item $x < c$ ($x \neq a, b$) in matched itemsets.
+**Result**: No temporal witness → continue
 
-**Result**: No witness → continue
-
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 No positions after currentIdx=3 (end of sequences) → no extensions
 
 **No extensions** → Forward-closed = YES
 
-**Gate 3: Envelope Verification**
+**Stage 3: Local/Internal Node Gate**
+
+No local-gap or internal witness applies to the current node → continue.
+
+**Stage 4: Envelope Verification**
 
 Envelopes:
 ```
@@ -438,15 +444,15 @@ Item 'd' can be S-prepended: ⟨(d)(a)(ab)(bc)⟩ has same support.
 **PointerStore**:
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    0          0          d         0
-S2:    0          0          d         0
+S1:    0          0          d
+S2:    0          0          d
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[0,0)` = ∅ → No witness
 
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 S-extension by 'a' at position 1: support = 2 = parent support
 
@@ -464,7 +470,7 @@ All have same-support extensions → NOT forward-closed → not output
 
 ### Node D5: P = ⟨(d)(a)(ab)(b)⟩, support = 2
 
-**Gate 2**: I-extension by 'c' has support = 2 = parent → NOT forward-closed
+**Stage 2**: I-extension by 'c' has support = 2 = parent → NOT forward-closed
 
 **Not output**
 
@@ -477,19 +483,23 @@ All have same-support extensions → NOT forward-closed → not output
 **PointerStore**:
 ```
 SID  startIdx  currentIdx  lastItem
-S1:    3          3          c         1
-S2:    3          3          c         1
+S1:    3          3          c
+S2:    3          3          c
 ```
 
-**Gate 1: BackScan Check**
+**Stage 1: Temporal BackScan Check**
 
 *Temporal witness* — `[3,3)` = ∅ → No witness
 
-**Gate 2: Forward-Closed Check**
+**Stage 2: Forward-Closed Check**
 
 No positions after 3 → no extensions → Forward-closed = YES
 
-**Gate 3: Envelope Verification**
+**Stage 3: Local/Internal Node Gate**
+
+No local-gap or internal witness applies to the current node → continue.
+
+**Stage 4: Envelope Verification**
 
 Envelopes:
 ```
@@ -518,8 +528,8 @@ S2:    0/0        1/1        2/2        3/3
 
 ## Summary
 
-| Pattern | Support | Gate 1 | Gate 2 | Gate 3 | Output |
-|---------|---------|--------|--------|--------|--------|
+| Pattern | Support | Temporal prune | Forward screen | Envelope verification | Output |
+|---------|---------|----------------|----------------|-----------------------|--------|
 | ⟨(a)⟩ | 4 | pass | ✅ forward-closed | ✅ pass | ✅ **OUTPUT** |
 | ⟨(a)(a)⟩ | 3 | pass | ❌ not forward-closed | skip | ❌ |
 | ⟨(a)(ab)⟩ | 3 | pass | ✅ forward-closed | ✅ pass | ✅ **OUTPUT** |
@@ -548,7 +558,7 @@ This ensures the semi-maximum period `[startIdx, currentIdx)` correctly captures
 
 This generalization covers both singleton and multi-item tails. Unlike single-item BackScan which only checks $x < \min(P_k)$, TriBack-Clo checks all $x \in E_{match(k)}$ such that $x < \max(P_k)$ and $x \notin P_k$.
 
-### 3. Gate 3 Failure Does NOT Prune Subtree
+### 3. Envelope Failure Does NOT Prune Subtree
 
 When envelope verification fails:
 - The pattern is **not output** (it has a same-support superpattern)
@@ -569,7 +579,7 @@ Only the temporal BackScan witness causes immediate subtree pruning, because tha
 Running TriBack-Clo on this example dataset produces:
 
 ```
- -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo experiments/datasets/execution_example_test.txt /tmp/triback-output.txt 2
+java -cp triback-clo-java/triback-clo.jar:experiments/spmf.jar ca.pfv.spmf.algorithms.sequentialpatterns.tribackclo.MainTestTriBackClo experiments/datasets/execution_example_test.txt /tmp/triback-output.txt 2
 
 ItemsetSequenceDatabase Statistics:
   Sequences: 4
@@ -606,18 +616,18 @@ Sample patterns:
 | **DFS Traversal** | | |
 | Nodes visited | 28 | All nodes entered in DFS |
 | Temporal prunes | 12 | Subtrees cut by temporal BackScan in this archived run |
-| Forward-closed nodes | ~7 | Reached Gate 2, passed to Gate 3 |
-| Envelope verifications | ~7 | Performed on ALL forward-closed nodes |
+| Forward-closed nodes | ~7 | Reached the node-gating stage |
+| Envelope verifications | ~7 | Performed on forward-closed nodes that are not node-gated |
 | **Output** | | |
-| Closed patterns | 3 | ★ passed all 3 gates |
-| Non-closed (envelope fail) | ~4 | 🚫 passed Gate 2, failed Gate 3 |
+| Closed patterns | 3 | ★ passed all stages |
+| Non-closed (envelope fail) | ~4 | 🚫 passed forward screening and node gating, failed envelope verification |
 
 ### Efficiency Analysis
 
 | Optimization | Impact |
 |--------------|--------|
 | **Temporal pruning** | Subtrees cut when a temporal BackScan witness is present |
-| **Gate 2 skip** | ~9 non-forward-closed nodes skip envelope verification |
+| **Forward-screening skip** | ~9 non-forward-closed nodes skip envelope verification |
 | **Overall** | Most nodes avoid envelope verification through temporal pruning, forward screening, or node gating |
 
 The prune-screen-gate-verify architecture ensures expensive envelope verification runs only on forward-closed nodes that are not eliminated by node-gating witnesses.

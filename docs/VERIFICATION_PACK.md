@@ -310,16 +310,15 @@ object ItemsetClosedMiner_Main {
     
     val totalTime = (System.nanoTime() - t0) / 1e9
     println(f"[TIME] Total Execution Time: $totalTime%.3f seconds")
-```scala
-package tribackclo
 ```
 
 ---
 
 ## 2. ItemsetPointerStore.scala
 
-**Purpose**: 4-tuple projection store with:
-- STRIDE=4: `(sid, startIdx, currentIdx, lastItem)`
+**Purpose (historical)**: archived projection-store sketch with:
+- An older STRIDE=5 representation `(sid, startIdx, currentIdx, lastItem, extType)` in this embedded Scala snippet.
+- The final paper and public Java implementation use the 4-tuple projection state `(sid, startIdx, currentIdx, lastItem)`.
 - BackScan witness detection via stamp intersection
 - S/I extension enumeration
 - Canonical I-extension: only items > lastItem

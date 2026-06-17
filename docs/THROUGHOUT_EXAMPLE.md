@@ -189,12 +189,7 @@ java -jar experiments/spmf.jar run BIDE+ test_minimal_5items.txt bide_out.txt 10
 | **CloSpan** | **84** | ✅ Correct |
 | **BIDE+** | **95** | ❌ outputs 12 non-closed + misses 1 closed |
 
-**Python Verification:**
-```bash
-python3 check_correctness.py test_phase1.txt /tmp/triback_phase1_out.txt 2 /tmp/bide_phase1_out.txt
-# TriBack-Clo: 84, BIDE+: 95, BIDE+ Non-Closed Patterns: 12
-# SUCCESS: TriBack-Clo results are perfect!
-```
+**Historical verification:** an independent closure checker used during development reported `TriBack-Clo: 84`, `BIDE+: 95`, and `BIDE+ Non-Closed Patterns: 12`. The helper script used for that one-off audit is not part of the public release; the public reproducibility package focuses on the accepted paper's Java benchmark protocol and archived result artifacts.
 
 **Conclusion:** BIDE+'s backward-I checking ($x < \min(P_k)$) is insufficient for multi-item itemsets. All candidate-based algorithms (ClaSP, CloFast, CloSpan) agree with TriBack-Clo.
 
@@ -205,7 +200,7 @@ python3 check_correctness.py test_phase1.txt /tmp/triback_phase1_out.txt 2 /tmp/
 | --- | --- |
 | Explore ⟨(c)⟩, ⟨(c)(...)⟩, etc. | Detect temporal witness immediately |
 | Find they're all non-closed later | Skip entire subtree |
-| Wasted computation | **Massive speedup** |
+| Wasted computation | Avoided subtree work |
 
 ---
 
@@ -216,7 +211,7 @@ TriBack-Clo intentionally **does not** “jump” over I-extension nodes.
 - Under the paper’s **existential tail** semantics for I-extension counting, different supporting sequences may realize same-support I-items using **different tail occurrences**.
 - Merging same-support I-items into one “jumped” node (and skipping intermediate I/S branches) can therefore be unsound.
 
-This is why the implementation always enumerates frequent I-children normally and relies on **forward-closed gating** to skip output for non-closed nodes while still exploring descendants (see also `tmp_ijump_counterexample.txt`).
+This is why the implementation always enumerates frequent I-children normally and relies on **forward-closed gating** to skip output for non-closed nodes while still exploring descendants.
 
 ## Concrete Example
 
